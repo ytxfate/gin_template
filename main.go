@@ -4,16 +4,15 @@ import (
 	"context"
 	"gin_template/middleware"
 	"gin_template/register_rgs"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-)
 
-var router *gin.Engine
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
 	//router = gin.Default()
@@ -40,7 +39,7 @@ func main() {
 		}
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("shutdown server...")
