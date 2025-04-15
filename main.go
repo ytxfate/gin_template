@@ -2,35 +2,21 @@ package main
 
 import (
 	"context"
-	"gin_template/middleware"
-	"gin_template/register_rgs"
+	"gin_template/project/routers"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	//router = gin.Default()
-	router := gin.New()
-
-	router.NoMethod(middleware.HandleRequestError)
-	router.NoRoute(middleware.HandleRequestError)
-
-	router.Use(middleware.Logger(), middleware.Recovery())
-
-	// 注册路由
-	api := router.Group("/api")
-	register_rgs.RegisterRouterGroups(api)
-
+	engine := routers.Init()
 	/* =============== 优雅关停 =============== */
 	srv := &http.Server{
 		Addr:    ":8080",
-		Handler: router,
+		Handler: engine,
 	}
 	go func() {
 		err := srv.ListenAndServe()
