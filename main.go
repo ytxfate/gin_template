@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"gin_template/project/routers"
+	"gin_template/project/utils/logger"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	logger.InitLogger()
+
 	engine := routers.Init()
 	/* =============== 优雅关停 =============== */
 	srv := &http.Server{
