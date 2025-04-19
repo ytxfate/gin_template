@@ -1,6 +1,10 @@
 package commresp
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 type StatusCode int
 type APIData interface{}
@@ -38,5 +42,5 @@ var (
 )
 
 func CommResp(ctx *gin.Context, code StatusCode, resp APIData, msg string) {
-	ctx.JSON(200, commRespBody{Code: code, Resp: resp, Msg: msg})
+	ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: resp, Msg: msg})
 }

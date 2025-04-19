@@ -5,7 +5,11 @@ import (
 	"gin_template/project/modules/auth"
 	"gin_template/project/modules/user"
 
+	_ "gin_template/docs"
+
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type option func(*gin.RouterGroup)
@@ -30,5 +34,8 @@ func Init() *gin.Engine {
 	for _, opt := range options {
 		opt(api)
 	}
+	// docs.SwaggerInfo.BasePath = "/api"
+	// docs.SwaggerInfo.Host = "http://0.0.0.0:8080"
+	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	return engine
 }

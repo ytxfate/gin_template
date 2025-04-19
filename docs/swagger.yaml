@@ -1,0 +1,70 @@
+basePath: /api
+definitions:
+  auth.authInfo:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  auth.refreshInfo:
+    properties:
+      refresh_jwt:
+        type: string
+    type: object
+host: 127.0.0.1:8080
+info:
+  contact: {}
+  description: gin 模板
+  title: gin_template
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 登录获取 jwt
+      parameters:
+      - description: 登录信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/auth.authInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: 登录接口
+      tags:
+      - 认证
+  /auth/refresh_token:
+    post:
+      consumes:
+      - application/json
+      description: 刷新 jwt
+      parameters:
+      - description: 刷新tokenn信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/auth.refreshInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - OAuth2Password: []
+      summary: 刷新token接口
+      tags:
+      - 认证
+securityDefinitions:
+  OAuth2Password:
+    description: OAuth protects our entity endpoints
+    flow: password
+    tokenUrl: /api/auth/login
+    type: oauth2
+swagger: "2.0"

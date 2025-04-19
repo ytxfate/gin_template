@@ -12,6 +12,15 @@ import (
 	"time"
 )
 
+// @title gin_template
+// @version 1.0
+// @description gin 模板
+// @host 127.0.0.1:8080
+// @BasePath /api
+// @securitydefinitions.oauth2.password OAuth2Password
+// @tokenUrl /api/auth/login
+// @scope {}
+// @description OAuth protects our entity endpoints
 func main() {
 	logger.InitLogger()
 
