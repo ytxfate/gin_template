@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	commresp "gin_template/project/utils/comm_resp"
 	"gin_template/project/utils/logger"
 	"runtime"
 
@@ -16,7 +17,8 @@ func Recovery() gin.HandlerFunc {
 				buf := make([]byte, 1<<16) // 65536
 				runtime.Stack(buf, false)
 				logger.Logger.Error(fmt.Sprintf("%v\n%v", err, string(buf)))
-				c.AbortWithStatusJSON(400, gin.H{"msg": "ERROR"})
+				commresp.CommResp(c, commresp.ExceptionError, nil, "ERROR")
+				c.Abort()
 			}
 		}()
 		c.Next()

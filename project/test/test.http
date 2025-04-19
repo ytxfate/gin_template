@@ -5,3 +5,20 @@ GET http://127.0.0.1:8080/api/user/
 GET http://127.0.0.1:8080/api/user/2
 ###
 GET http://127.0.0.1:8080/
+###
+POST http://127.0.0.1:8080/api/auth/login
+content-type: application/json
+
+{
+    "username": "hsd",
+    "password": "pwd"
+}
+
+###
+POST http://127.0.0.1:8080/api/auth/refresh_token
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJoc2QiLCJleHAiOjE3NDUwNTQwMjIsImlhdCI6MTc0NTA1MjIyMiwiZGF0YSI6eyJ1c2VybmFtZSI6ImhzZCIsInNjb3BlcyI6bnVsbH19.CWAtit3wgbOa2E4oNv30qWEpc4o0AZOtOaNSpHVI1dM
+
+{
+    "refresh_jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJoc2QiLCJleHAiOjE3NDUwNTU4MjIsImlhdCI6MTc0NTA1MjIyMiwiZW5jcnlwdF9qd3QiOiI5MTFlYWZjZjkzMjYxYmJiYjRlNjMyYzkzMzVjMTA4MTQyMWYyMTJlMWEyM2RkZjhlMDQyNGY1NjEyM2VlMzg0In0.og8qix2bzyIjXto55bWXyohQu-Jpg4zKWsYSlCwdk-Q"
+}

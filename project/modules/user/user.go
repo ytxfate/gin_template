@@ -1,6 +1,7 @@
 package user
 
 import (
+	commresp "gin_template/project/utils/comm_resp"
 	"gin_template/project/utils/logger"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +9,7 @@ import (
 
 func userHandler(c *gin.Context) {
 	logger.Logger.Info("请求 userHandler")
-	c.JSON(200, gin.H{"path": "user"})
+	commresp.CommResp(c, commresp.Success, gin.H{"path": "user"}, "ok")
 }
 
 func user2Handler(c *gin.Context) {
