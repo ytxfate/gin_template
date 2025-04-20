@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "登录获取 jwt",
+                "description": "登录获取 jwt\ncode == 1102 , 需刷新 jwt;\ncode == 1200 , 需重新登录后跳转;\ncode == 1101 , 再次请求; (基本不需要)",
                 "consumes": [
                     "application/json"
                 ],
@@ -126,20 +126,30 @@ const docTemplate = `{
     "definitions": {
         "auth.authInfo": {
             "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                 }
             }
         },
         "auth.refreshInfo": {
             "type": "object",
+            "required": [
+                "refresh_jwt"
+            ],
             "properties": {
                 "refresh_jwt": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         }

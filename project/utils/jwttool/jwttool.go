@@ -69,15 +69,16 @@ func CreateJWTAndRefreshJWT(jwtInfo *JWTInfo) (tk string, refreshTk string, err 
 }
 
 // 解析/校验 JWT
-func ValidateJWT(tk string) (stat bool, jwtInfo JWTInfo, err error) {
+func ValidateJWT(tk string, options ...jwt.ParserOption) (stat bool, jwtInfo JWTInfo, err error) {
 	// 解析token
 	var (
 		jbi   jwtBodyInfo
 		token *jwt.Token
 	)
-	token, err = jwt.ParseWithClaims(tk, &jbi, func(token *jwt.Token) (interface{}, error) {
-		return mySigningKey, nil
-	})
+	token, err = jwt.ParseWithClaims(tk, &jbi,
+		func(token *jwt.Token) (interface{}, error) { return mySigningKey, nil },
+		options...,
+	)
 	if err != nil { // 解析token失败
 		return
 	}

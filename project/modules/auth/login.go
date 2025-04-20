@@ -7,17 +7,21 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // authInfo 登录信息
 type authInfo struct {
-	Username string `form:"username" json:"username"`
-	Password string `form:"password" json:"password"`
+	Username string `form:"username" json:"username" binding:"required,min=6"`
+	Password string `form:"password" json:"password" binding:"required,min=6"`
 }
 
 // loginHandler 登录接口
 // @Summary 登录接口
 // @Description 登录获取 jwt
+// @Description code == 1102 , 需刷新 jwt;
+// @Description code == 1200 , 需重新登录后跳转;
+// @Description code == 1101 , 再次请求; (基本不需要)
 // @Tags 认证
 // @Accept application/json
 // @Produce application/json
@@ -27,8 +31,8 @@ type authInfo struct {
 func loginHandler(c *gin.Context) {
 	var ai authInfo
 	err := c.ShouldBind(&ai)
-	if err != nil || ai.Username == "" || ai.Password == "" {
-		commresp.CommResp(c, commresp.ParameterError, nil, "无效的参数")
+	if err != nil {
+		commresp.CommResp(c, commresp.ParameterError, err, "参数异常")
 		return
 	}
 	// NOTE: 用户信息验证
@@ -50,7 +54,7 @@ func loginHandler(c *gin.Context) {
 
 // refreshInfo 刷新tokenn信息
 type refreshInfo struct {
-	RefreshJwt string `json:"refresh_jwt"`
+	RefreshJwt string `json:"refresh_jwt" binding:"required,min=1"`
 }
 
 // refreshTokenHandler 刷新token接口
@@ -64,10 +68,16 @@ type refreshInfo struct {
 // @Router /auth/refresh_token [post]
 // @Security OAuth2Password
 func refreshTokenHandler(c *gin.Context) {
+	_, jwtInfo, err := jwttool.ValidateJWT(middleware.GetHeaderAuthToken(c),
+		jwt.WithoutClaimsValidation()) // 获取 jwt 存储信息, 不校验是否失效
+	if err != nil {
+		commresp.CommResp(c, commresp.UserLogout, nil, "登录失效")
+		return
+	}
 	var ri refreshInfo
-	err := c.ShouldBind(&ri)
-	if err != nil || ri.RefreshJwt == "" {
-		commresp.CommResp(c, commresp.ParameterError, nil, "无效的参数")
+	err = c.ShouldBind(&ri)
+	if err != nil {
+		commresp.CommResp(c, commresp.ParameterError, err, "参数异常")
 		return
 	}
 	stat := jwttool.ValidateRefreshJWT(middleware.GetHeaderAuthToken(c), ri.RefreshJwt)
@@ -75,8 +85,7 @@ func refreshTokenHandler(c *gin.Context) {
 		commresp.CommResp(c, commresp.UserNoLogin, nil, "Refresh Token 验证失败")
 		return
 	}
-	jwtInfo := c.MustGet("jwtInfo").(*jwttool.JWTInfo)
-	tk, refreshTk, err := jwttool.CreateJWTAndRefreshJWT(jwtInfo)
+	tk, refreshTk, err := jwttool.CreateJWTAndRefreshJWT(&jwtInfo)
 	if err != nil {
 		commresp.CommResp(c, commresp.JwtCreateError, nil, "JWT 信息生成异常")
 		return

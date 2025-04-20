@@ -3,14 +3,22 @@ definitions:
   auth.authInfo:
     properties:
       password:
+        minLength: 6
         type: string
       username:
+        minLength: 6
         type: string
+    required:
+    - password
+    - username
     type: object
   auth.refreshInfo:
     properties:
       refresh_jwt:
+        minLength: 1
         type: string
+    required:
+    - refresh_jwt
     type: object
 host: 127.0.0.1:8080
 info:
@@ -23,7 +31,11 @@ paths:
     post:
       consumes:
       - application/json
-      description: 登录获取 jwt
+      description: |-
+        登录获取 jwt
+        code == 1102 , 需刷新 jwt;
+        code == 1200 , 需重新登录后跳转;
+        code == 1101 , 再次请求; (基本不需要)
       parameters:
       - description: 登录信息
         in: body

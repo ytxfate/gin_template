@@ -31,7 +31,7 @@ func AuthMiddleware() func(c *gin.Context) {
 		}
 		stat, jwtInfo, err := jwttool.ValidateJWT(token)
 		if !stat || err != nil {
-			commresp.CommResp(c, commresp.UserNoLogin, nil, "未登录.")
+			commresp.CommResp(c, commresp.JwtParseError, nil, "登录已过期, 请重新登录")
 			c.Abort()
 			return
 		}
