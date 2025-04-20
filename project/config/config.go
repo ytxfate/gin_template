@@ -23,9 +23,19 @@ type MongodbConf struct {
 	DefaultDb string `yaml:"defaultDb"` // 默认数据库
 }
 
+type GaussDBConf struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	DbName   string `yaml:"dbName"`
+	Sslmode  string `yaml:"sslmode"`
+}
+
 type Config struct {
 	Web     Web         `yaml:"web"`
 	MongoDB MongodbConf `yaml:"mongoDB"`
+	GaussDB GaussDBConf `yaml:"gaussDB"`
 }
 
 func InitConfig() (err error) {

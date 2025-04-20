@@ -12,3 +12,11 @@ mongoDB:
   username: "test"
   password: "test"
   defaultDb: "admin"
+
+gaussDB:
+  host: "127.0.0.1"
+  port: 5432
+  user: "ytx"
+  password: "Gaussdb@1"
+  dbName: "postgres"
+  sslmode: "disable"

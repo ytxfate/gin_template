@@ -6,6 +6,7 @@ import (
 	"gin_template/project/middleware"
 	"gin_template/project/routers"
 	"gin_template/project/utils/logger"
+	operategaussdb "gin_template/project/utils/operate_gaussdb"
 	operatemongodb "gin_template/project/utils/operate_mongodb"
 	"net/http"
 	"os"
@@ -27,7 +28,12 @@ func main() {
 	logger.Logger.Sugar().Debugf("%#v", config.Cfg)
 	middleware.InitValidator()
 
+	// 数据库连接初始化
 	err = operatemongodb.InitMongoDB()
+	if err != nil {
+		logger.Logger.Fatal(err.Error())
+	}
+	err = operategaussdb.InitGaussDB()
 	if err != nil {
 		logger.Logger.Fatal(err.Error())
 	}
@@ -48,10 +54,16 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+	// 关闭数据库连接
 	err = operatemongodb.Close()
 	if err != nil {
 		logger.Logger.Error(err.Error())
 	}
+	err = operategaussdb.Close()
+	if err != nil {
+		logger.Logger.Error(err.Error())
+	}
+
 	logger.Logger.Info("shutdown server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
