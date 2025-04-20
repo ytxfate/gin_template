@@ -61,6 +61,32 @@ paths:
       summary: 刷新token接口
       tags:
       - 认证
+  /user/:
+    get:
+      consumes:
+      - application/json
+      description: 用户模拟接口
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: 用户接口
+      tags:
+      - 用户
+  /user/2:
+    get:
+      consumes:
+      - application/json
+      description: 模拟panic
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: 用户接口2
+      tags:
+      - 用户
 securityDefinitions:
   OAuth2Password:
     description: OAuth protects our entity endpoints
