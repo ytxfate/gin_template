@@ -1,13 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "gin 模板",
-        "title": "gin_template",
-        "contact": {},
-        "version": "1.0"
+        "contact": {}
     },
-    "host": "127.0.0.1:8080",
-    "basePath": "/api",
     "paths": {
         "/auth/login": {
             "post": {
@@ -153,7 +148,7 @@
             "description": "OAuth protects our entity endpoints",
             "type": "oauth2",
             "flow": "password",
-            "tokenUrl": "/api/auth/login"
+            "tokenUrl": "/api/v1.0/auth/login"
         }
     }
 }

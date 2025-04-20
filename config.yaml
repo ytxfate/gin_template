@@ -1,0 +1,8 @@
+web:
+  isProdEnv: false
+  title: "gin_template"
+  description: "gin 模板"
+  addr: "0.0.0.0:8080"
+  secretKey: "xxxxxxxx"
+  version: "v1.0"
+  apiPrefixPath: "/api"

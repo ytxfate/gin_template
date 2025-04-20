@@ -1,12 +1,14 @@
 package routers
 
 import (
+	"gin_template/project/config"
 	"gin_template/project/middleware"
 	"gin_template/project/modules/auth"
 	"gin_template/project/modules/user"
 
-	_ "gin_template/docs"
+	docs "gin_template/docs"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -27,15 +29,22 @@ func Init() *gin.Engine {
 	engine.NoMethod(middleware.HandleRequestError)
 	engine.NoRoute(middleware.HandleRequestError)
 	// 中间件注册
-	engine.Use(middleware.Logger(), middleware.Recovery())
+	engine.Use(middleware.Logger(), middleware.Recovery(), cors.Default())
 
-	api := engine.Group("/api")
+	prefix := config.Cfg.Web.ApiPrefixPath + "/" + config.Cfg.Web.Version
+	api := engine.Group(prefix)
 	options := include(auth.RouterGroup, user.RouterGroup)
 	for _, opt := range options {
 		opt(api)
 	}
-	// docs.SwaggerInfo.BasePath = "/api"
-	// docs.SwaggerInfo.Host = "http://0.0.0.0:8080"
-	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	if !config.Cfg.Web.IsProdEnv {
+		// 设置 swagger 文档信息
+		docs.SwaggerInfo.Title = config.Cfg.Web.Title
+		docs.SwaggerInfo.Description = config.Cfg.Web.Description
+		docs.SwaggerInfo.BasePath = prefix
+		docs.SwaggerInfo.Version = config.Cfg.Web.Version
+		docs.SwaggerInfo.Host = config.Cfg.Web.Addr
+		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	}
 	return engine
 }

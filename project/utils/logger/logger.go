@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"gin_template/project/config"
 	"os"
 	"time"
 
@@ -19,9 +20,15 @@ func InitLogger() {
 	encoderConfig.EncodeCaller = zapcore.FullCallerEncoder
 	consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
 	// fileEncoder := zapcore.NewConsoleEncoder(encoderConfig)
+	consoleLevel := zapcore.DebugLevel
+	// fileLevel := zapcore.DebugLevel
+	if config.Cfg.Web.IsProdEnv {
+		consoleLevel = zapcore.InfoLevel
+		// fileLevel = zapcore.InfoLevel
+	}
 	core := zapcore.NewTee(
 		// 标准输出日志
-		zapcore.NewCore(consoleEncoder, zapcore.AddSync(os.Stdout), zapcore.DebugLevel),
+		zapcore.NewCore(consoleEncoder, zapcore.AddSync(os.Stdout), consoleLevel),
 		// 文件记录日志  gopkg.in/natefinch/lumberjack.v2
 		// zapcore.NewCore(fileEncoder, zapcore.AddSync(&lumberjack.Logger{
 		// 	Filename:   "logs/api.log",
@@ -29,7 +36,7 @@ func InitLogger() {
 		// 	MaxBackups: 2,
 		// 	MaxAge:     10,
 		// 	Compress:   true,
-		// }), zapcore.DebugLevel),
+		// }), fileLevel),
 	)
 	Logger = zap.New(core)
 

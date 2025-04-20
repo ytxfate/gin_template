@@ -1,4 +1,3 @@
-basePath: /api
 definitions:
   auth.authInfo:
     properties:
@@ -20,12 +19,8 @@ definitions:
     required:
     - refresh_jwt
     type: object
-host: 127.0.0.1:8080
 info:
   contact: {}
-  description: gin 模板
-  title: gin_template
-  version: "1.0"
 paths:
   /auth/login:
     post:
@@ -103,6 +98,6 @@ securityDefinitions:
   OAuth2Password:
     description: OAuth protects our entity endpoints
     flow: password
-    tokenUrl: /api/auth/login
+    tokenUrl: /api/v1.0/auth/login
     type: oauth2
 swagger: "2.0"

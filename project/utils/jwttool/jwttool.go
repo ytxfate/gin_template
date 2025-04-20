@@ -3,13 +3,11 @@ package jwttool
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"gin_template/project/config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
-
-// 用于签名的字符串
-var mySigningKey = []byte("xxxxxxxxxx")
 
 var jwtValidTime time.Duration = time.Minute * 30
 
@@ -39,7 +37,7 @@ func createJWT(claims jwt.Claims) (string, error) {
 	// 生成token对象
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	// 生成签名字符串
-	return token.SignedString(mySigningKey)
+	return token.SignedString([]byte(config.Cfg.Web.SecretKey))
 }
 
 func CreateJWTAndRefreshJWT(jwtInfo *JWTInfo) (tk string, refreshTk string, err error) {
@@ -76,7 +74,7 @@ func ValidateJWT(tk string, options ...jwt.ParserOption) (stat bool, jwtInfo JWT
 		token *jwt.Token
 	)
 	token, err = jwt.ParseWithClaims(tk, &jbi,
-		func(token *jwt.Token) (interface{}, error) { return mySigningKey, nil },
+		func(token *jwt.Token) (interface{}, error) { return []byte(config.Cfg.Web.SecretKey), nil },
 		options...,
 	)
 	if err != nil { // 解析token失败
@@ -92,7 +90,7 @@ func ValidateRefreshJWT(priTk, refreTk string) bool {
 		err  error
 	)
 	_, err = jwt.ParseWithClaims(refreTk, &rjbi, func(token *jwt.Token) (interface{}, error) {
-		return mySigningKey, nil
+		return []byte(config.Cfg.Web.SecretKey), nil
 	})
 	if err == nil && rjbi.EncryptJwt == jwtEncryptHandler(priTk) {
 		return true

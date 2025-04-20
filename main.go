@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"gin_template/project/config"
 	"gin_template/project/middleware"
 	"gin_template/project/routers"
 	"gin_template/project/utils/logger"
@@ -12,23 +14,24 @@ import (
 	"time"
 )
 
-// @title gin_template
-// @version 1.0
-// @description gin 模板
-// @host 127.0.0.1:8080
-// @BasePath /api
 // @securitydefinitions.oauth2.password OAuth2Password
-// @tokenUrl /api/auth/login
+// @tokenUrl /api/v1.0/auth/login
 // @scope {}
 // @description OAuth protects our entity endpoints
 func main() {
+	err := config.InitConfig()
+	if err != nil {
+		panic(err)
+	}
 	logger.InitLogger()
 	middleware.InitValidator()
+
+	logger.Logger.Debug(fmt.Sprintf("%#v", config.Cfg))
 
 	engine := routers.Init()
 	/* =============== 优雅关停 =============== */
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    config.Cfg.Web.Addr,
 		Handler: engine,
 	}
 	go func() {

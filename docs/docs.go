@@ -159,19 +159,19 @@ const docTemplate = `{
             "description": "OAuth protects our entity endpoints",
             "type": "oauth2",
             "flow": "password",
-            "tokenUrl": "/api/auth/login"
+            "tokenUrl": "/api/v1.0/auth/login"
         }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "127.0.0.1:8080",
-	BasePath:         "/api",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "gin_template",
-	Description:      "gin 模板",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
