@@ -49,5 +49,6 @@ func Close() (err error) {
 	if err != nil {
 		logger.Logger.Sugar().Errorf("MongoDB ping err: %v", err)
 	}
+	logger.Logger.Info("Mongodb closed")
 	return
 }
