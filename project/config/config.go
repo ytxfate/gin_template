@@ -16,8 +16,16 @@ type Web struct {
 	ApiPrefixPath string `yaml:"apiPrefixPath"`
 }
 
+type MongodbConf struct {
+	Url       string `yaml:"url"`       // 有此项则优先用此项进行数据库连接否则用 HOST 和 PORT 连接
+	Username  string `yaml:"username"`  // 用户名
+	Password  string `yaml:"password"`  // 密码
+	DefaultDb string `yaml:"defaultDb"` // 默认数据库
+}
+
 type Config struct {
-	Web Web `yaml:"web"`
+	Web     Web         `yaml:"web"`
+	MongoDB MongodbConf `yaml:"mongoDB"`
 }
 
 func InitConfig() (err error) {

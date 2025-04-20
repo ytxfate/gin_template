@@ -6,3 +6,9 @@ web:
   secretKey: "xxxxxxxx"
   version: "v1.0"
   apiPrefixPath: "/api"
+
+mongoDB:
+  url: "127.0.0.1:27017"
+  username: "test"
+  password: "test"
+  defaultDb: "admin"

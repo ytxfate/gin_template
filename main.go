@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"gin_template/project/config"
 	"gin_template/project/middleware"
 	"gin_template/project/routers"
 	"gin_template/project/utils/logger"
+	operatemongodb "gin_template/project/utils/operate_mongodb"
 	"net/http"
 	"os"
 	"os/signal"
@@ -24,9 +24,10 @@ func main() {
 		panic(err)
 	}
 	logger.InitLogger()
+	logger.Logger.Sugar().Debugf("%#v", config.Cfg)
 	middleware.InitValidator()
 
-	logger.Logger.Debug(fmt.Sprintf("%#v", config.Cfg))
+	operatemongodb.InitMongoDB()
 
 	engine := routers.Init()
 	/* =============== 优雅关停 =============== */
