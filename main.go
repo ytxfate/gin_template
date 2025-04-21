@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
-	"gin_template/middleware"
-	"gin_template/register_rgs"
-	"github.com/gin-gonic/gin"
-	"log"
+	"gin_template/project/config"
+	"gin_template/project/middleware"
+	"gin_template/project/routers"
+	"gin_template/project/utils/logger"
+	operategaussdb "gin_template/project/utils/operate_gaussdb"
+	operatemongodb "gin_template/project/utils/operate_mongodb"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,42 +15,61 @@ import (
 	"time"
 )
 
-var router *gin.Engine
-
+// @securitydefinitions.oauth2.password OAuth2Password
+// @tokenUrl /api/v1.0/auth/login
+// @scope {}
+// @description OAuth protects our entity endpoints
 func main() {
-	//router = gin.Default()
-	router := gin.New()
+	err := config.InitConfig()
+	if err != nil {
+		panic(err)
+	}
+	logger.InitLogger()
+	logger.Logger.Sugar().Debugf("%#v", config.Cfg)
+	middleware.InitValidator()
 
-	router.NoMethod(middleware.HandleRequestError)
-	router.NoRoute(middleware.HandleRequestError)
+	// 数据库连接初始化
+	err = operatemongodb.InitMongoDB()
+	if err != nil {
+		logger.Logger.Fatal(err.Error())
+	}
+	err = operategaussdb.InitGaussDB()
+	if err != nil {
+		logger.Logger.Fatal(err.Error())
+	}
 
-	router.Use(middleware.Logger(), middleware.Recovery())
-
-	// 注册路由
-	api := router.Group("/api")
-	register_rgs.RegisterRouterGroups(api)
-
+	engine := routers.Init()
 	/* =============== 优雅关停 =============== */
 	srv := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
+		Addr:    config.Cfg.Web.Addr,
+		Handler: engine,
 	}
 	go func() {
 		err := srv.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Listen: %s\n", err)
+			logger.Logger.Fatal(err.Error())
 		}
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("shutdown server...")
+	// 关闭数据库连接
+	err = operatemongodb.Close()
+	if err != nil {
+		logger.Logger.Error(err.Error())
+	}
+	err = operategaussdb.Close()
+	if err != nil {
+		logger.Logger.Error(err.Error())
+	}
+
+	logger.Logger.Info("shutdown server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal("server shutdown:", err)
+		logger.Logger.Fatal(err.Error())
 	}
-	log.Println("server exiting")
+	logger.Logger.Info("server exiting")
 	/* ======================================= */
 }
