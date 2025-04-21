@@ -8,7 +8,6 @@ import (
 
 	docs "gin_template/docs"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -29,7 +28,9 @@ func Init() *gin.Engine {
 	engine.NoMethod(middleware.HandleRequestError)
 	engine.NoRoute(middleware.HandleRequestError)
 	// 中间件注册
-	engine.Use(middleware.Logger(), middleware.Recovery(), cors.Default())
+	engine.Use(middleware.Recovery())
+	engine.Use(middleware.Logger())
+	engine.Use(middleware.CORS())
 
 	prefix := config.Cfg.Web.ApiPrefixPath + "/" + config.Cfg.Web.Version
 	api := engine.Group(prefix)
