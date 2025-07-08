@@ -1,6 +1,7 @@
 package commresp
 
 import (
+	"gin_template/project/config"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -43,9 +44,13 @@ var (
 )
 
 func CommResp(ctx *gin.Context, code StatusCode, resp apiData, msg string) {
-	// TODO: 参数校验失败时错误信息放于resp中, 生产环境应该关闭参数错误提示
+	// 参数校验失败时错误信息放于resp中, 生产环境应该关闭参数错误提示
 	if err, ok := resp.(validator.ValidationErrors); ok {
-		ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: err.Error(), Msg: msg})
+		if !config.Cfg.Web.IsProdEnv {
+			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: err.Error(), Msg: msg})
+		} else {
+			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: nil, Msg: msg})
+		}
 		return
 	}
 	ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: resp, Msg: msg})
