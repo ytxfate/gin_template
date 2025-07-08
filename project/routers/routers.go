@@ -2,9 +2,9 @@ package routers
 
 import (
 	"gin_template/project/config"
+	"gin_template/project/controller/auth"
+	"gin_template/project/controller/user"
 	"gin_template/project/middleware"
-	"gin_template/project/modules/auth"
-	"gin_template/project/modules/user"
 
 	apidocs "gin_template/project/apidocs"
 
