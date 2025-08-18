@@ -16,7 +16,7 @@ func Recovery() gin.HandlerFunc {
 				// 打印错误栈信息
 				buf := make([]byte, 1<<16) // 65536
 				runtime.Stack(buf, false)
-				logger.Logger.Error(fmt.Sprintf("%v\n%v", err, string(buf)))
+				logger.Error(fmt.Sprintf("%v\n%v", err, string(buf)))
 				commresp.CommResp(c, commresp.ExceptionError, nil, "ERROR")
 				c.Abort()
 			}
