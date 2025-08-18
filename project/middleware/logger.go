@@ -13,7 +13,7 @@ func Logger() gin.HandlerFunc {
 		start := time.Now()
 		c.Next()
 		cost := time.Since(start)
-		logger.Logger.Info(fmt.Sprintf("%-15s | %s %s %s | %3d | %s %s",
+		logger.Info(fmt.Sprintf("%-15s | %s %s %s | %3d | %s %s",
 			c.ClientIP(),
 			c.Request.Method,
 			c.Request.URL.Path,

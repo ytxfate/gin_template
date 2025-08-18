@@ -28,7 +28,7 @@ func InitGaussDB() (err error) {
 	if err != nil {
 		return
 	}
-	logger.Logger.Info("GaussDB connect...")
+	logger.Info("GaussDB connect...")
 	return
 }
 
@@ -37,6 +37,6 @@ func Close() (err error) {
 	if err != nil {
 		return
 	}
-	logger.Logger.Sugar().Infof("GaussDB closed")
+	logger.Infof("GaussDB closed")
 	return
 }
