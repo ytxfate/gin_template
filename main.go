@@ -13,6 +13,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // @securitydefinitions.oauth2.password OAuth2Password
@@ -36,6 +38,10 @@ func main() {
 	err = operategaussdb.InitGaussDB()
 	if err != nil {
 		logger.Fatal(err.Error())
+	}
+
+	if config.Cfg.Web.IsProdEnv {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	engine := routers.Init()
