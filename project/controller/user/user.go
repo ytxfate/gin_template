@@ -16,7 +16,7 @@ import (
 // @Success 200 {object} nil
 // @Router /user/ [get]
 func userHandler(c *gin.Context) {
-	logger.Logger.Info("请求 userHandler")
+	logger.Info("请求 userHandler")
 	commresp.CommResp(c, commresp.Success, gin.H{"path": "user"}, "ok")
 }
 
@@ -29,6 +29,6 @@ func userHandler(c *gin.Context) {
 // @Success 200 {object} nil
 // @Router /user/2 [get]
 func user2Handler(c *gin.Context) {
-	logger.Logger.Info("请求 user2Handler")
+	logger.Info("请求 user2Handler")
 	panic("主动 panic")
 }

@@ -3,13 +3,29 @@ package logger
 import (
 	"gin_template/project/config"
 	"os"
+	"sync"
 	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-var Logger *zap.Logger
+var (
+	logger  *zap.Logger
+	logLock sync.RWMutex
+)
+
+func SetLogger(log *zap.Logger) {
+	logLock.Lock()
+	defer logLock.Unlock()
+	logger = log
+}
+
+func GetLogger() *zap.Logger {
+	logLock.Lock()
+	defer logLock.Unlock()
+	return logger
+}
 
 func InitLogger() {
 	encoderConfig := zap.NewProductionEncoderConfig()
@@ -17,7 +33,7 @@ func InitLogger() {
 		pae.AppendString(t.Format("2006-01-02 15:04:05.000"))
 	}
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	encoderConfig.EncodeCaller = zapcore.FullCallerEncoder
+	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
 	consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
 	// fileEncoder := zapcore.NewConsoleEncoder(encoderConfig)
 	consoleLevel := zapcore.DebugLevel
@@ -38,6 +54,6 @@ func InitLogger() {
 		// 	Compress:   true,
 		// }), fileLevel),
 	)
-	Logger = zap.New(core)
-
+	zapLogger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	SetLogger(zapLogger)
 }

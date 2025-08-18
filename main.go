@@ -13,6 +13,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // @securitydefinitions.oauth2.password OAuth2Password
@@ -25,17 +27,21 @@ func main() {
 		panic(err)
 	}
 	logger.InitLogger()
-	logger.Logger.Sugar().Debugf("%#v", config.Cfg)
+	logger.Debugf("%#v", config.Cfg)
 	middleware.InitValidator()
 
 	// 数据库连接初始化
 	err = operatemongodb.InitMongoDB()
 	if err != nil {
-		logger.Logger.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 	err = operategaussdb.InitGaussDB()
 	if err != nil {
-		logger.Logger.Fatal(err.Error())
+		logger.Fatal(err.Error())
+	}
+
+	if config.Cfg.Web.IsProdEnv {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	engine := routers.Init()
@@ -47,7 +53,7 @@ func main() {
 	go func() {
 		err := srv.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
-			logger.Logger.Fatal(err.Error())
+			logger.Fatal(err.Error())
 		}
 	}()
 
@@ -57,19 +63,19 @@ func main() {
 	// 关闭数据库连接
 	err = operatemongodb.Close()
 	if err != nil {
-		logger.Logger.Error(err.Error())
+		logger.Error(err.Error())
 	}
 	err = operategaussdb.Close()
 	if err != nil {
-		logger.Logger.Error(err.Error())
+		logger.Error(err.Error())
 	}
 
-	logger.Logger.Info("shutdown server...")
+	logger.Info("shutdown server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Logger.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
-	logger.Logger.Info("server exiting")
+	logger.Info("server exiting")
 	/* ======================================= */
 }

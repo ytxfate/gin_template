@@ -29,16 +29,16 @@ func InitMongoDB() (err error) {
 	opts.SetMaxPoolSize(10) // 设置最大连接池
 	MgClient, err = mongo.Connect(&opts)
 	if err != nil {
-		logger.Logger.Sugar().Errorf("MongoDB connect err: %v", err)
+		logger.Errorf("MongoDB connect err: %v", err)
 		return
 	}
 	err = MgClient.Ping(ctx, readpref.Primary())
 	if err != nil {
-		logger.Logger.Sugar().Errorf("MongoDB ping err: %v", err)
+		logger.Errorf("MongoDB ping err: %v", err)
 		return
 	}
 	MgDB = MgClient.Database(config.Cfg.MongoDB.DefaultDb)
-	logger.Logger.Info("Mongodb Connect..")
+	logger.Info("Mongodb Connect..")
 	return
 }
 
@@ -47,8 +47,8 @@ func Close() (err error) {
 	defer cancel()
 	err = MgClient.Disconnect(ctx)
 	if err != nil {
-		logger.Logger.Sugar().Errorf("MongoDB ping err: %v", err)
+		logger.Errorf("MongoDB ping err: %v", err)
 	}
-	logger.Logger.Info("Mongodb closed")
+	logger.Info("Mongodb closed")
 	return
 }

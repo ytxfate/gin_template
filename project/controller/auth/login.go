@@ -2,12 +2,11 @@ package auth
 
 import (
 	"gin_template/project/middleware"
+	loginsrvc "gin_template/project/service/login_srvc"
 	commresp "gin_template/project/utils/comm_resp"
-	"gin_template/project/utils/jwttool"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 // authInfo 登录信息
@@ -35,10 +34,9 @@ func loginHandler(c *gin.Context) {
 		commresp.CommResp(c, commresp.ParameterError, err, "参数异常")
 		return
 	}
-	// NOTE: 用户信息验证
-	tk, refreshTk, err := jwttool.CreateJWTAndRefreshJWT(&jwttool.JWTInfo{UserName: ai.Username})
-	if err != nil {
-		commresp.CommResp(c, commresp.JwtCreateError, nil, "JWT 信息生成异常")
+	tk, refreshTk, custErr := loginsrvc.Login(ai.Username, ai.Password)
+	if custErr != nil {
+		commresp.CommResp(c, custErr.Code, nil, custErr.Error())
 		return
 	}
 	// commresp.CommResp(c, commresp.Success, gin.H{
@@ -68,30 +66,22 @@ type refreshInfo struct {
 // @Router /auth/refresh_token [post]
 // @Security OAuth2Password
 func refreshTokenHandler(c *gin.Context) {
-	_, jwtInfo, err := jwttool.ValidateJWT(middleware.GetHeaderAuthToken(c),
-		jwt.WithoutClaimsValidation()) // 获取 jwt 存储信息, 不校验是否失效
-	if err != nil {
-		commresp.CommResp(c, commresp.UserLogout, nil, "登录失效")
-		return
-	}
+	tk := middleware.GetHeaderAuthToken(c)
 	var ri refreshInfo
-	err = c.ShouldBind(&ri)
+	err := c.ShouldBind(&ri)
 	if err != nil {
 		commresp.CommResp(c, commresp.ParameterError, err, "参数异常")
 		return
 	}
-	stat := jwttool.ValidateRefreshJWT(middleware.GetHeaderAuthToken(c), ri.RefreshJwt)
-	if !stat {
-		commresp.CommResp(c, commresp.UserNoLogin, nil, "Refresh Token 验证失败")
+
+	newTk, newRefreshTk, custErr := loginsrvc.RefreshToken(tk, ri.RefreshJwt)
+	if custErr != nil {
+		commresp.CommResp(c, custErr.Code, nil, custErr.Error())
 		return
 	}
-	tk, refreshTk, err := jwttool.CreateJWTAndRefreshJWT(&jwtInfo)
-	if err != nil {
-		commresp.CommResp(c, commresp.JwtCreateError, nil, "JWT 信息生成异常")
-		return
-	}
+
 	commresp.CommResp(c, commresp.Success, gin.H{
-		"jwt":         tk,
-		"refresh_jwt": refreshTk,
+		"jwt":         newTk,
+		"refresh_jwt": newRefreshTk,
 	}, "OK")
 }
