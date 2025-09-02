@@ -2,7 +2,6 @@ package operatemongodb
 
 import (
 	"context"
-	"gin_template/project/config"
 	"gin_template/project/utils/logger"
 	"strings"
 	"time"
@@ -15,17 +14,32 @@ import (
 var MgClient *mongo.Client
 var MgDB *mongo.Database
 
+type MongodbConf struct {
+	Url       string `yaml:"URL"`        // 有此项则优先用此项进行数据库连接否则用 HOST 和 PORT 连接
+	Username  string `yaml:"USERNAME"`   // 用户名
+	Password  string `yaml:"PASSWORD"`   // 密码
+	DefaultDb string `yaml:"DEFAULT_DB"` // 默认数据库
+}
+
 // 根据配置初始化连接mongodb
-func InitMongoDB() (err error) {
+func InitMongoDB(mgCfg *MongodbConf) (err error) {
+	if mgCfg == nil {
+		mgCfg = &MongodbConf{
+			Url:       "127.0.0.1:27017",
+			Username:  "test",
+			Password:  "test",
+			DefaultDb: "test",
+		}
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	opts := options.ClientOptions{}
 	opts.SetAuth(options.Credential{
-		AuthSource: config.Cfg.MongoDB.DefaultDb,
-		Username:   config.Cfg.MongoDB.Username,
-		Password:   config.Cfg.MongoDB.Password,
+		AuthSource: mgCfg.DefaultDb,
+		Username:   mgCfg.Username,
+		Password:   mgCfg.Password,
 	})
-	opts.SetHosts(strings.Split(config.Cfg.MongoDB.Url, ","))
+	opts.SetHosts(strings.Split(mgCfg.Url, ","))
 	opts.SetMaxPoolSize(10) // 设置最大连接池
 	MgClient, err = mongo.Connect(&opts)
 	if err != nil {
@@ -37,7 +51,7 @@ func InitMongoDB() (err error) {
 		logger.Errorf("MongoDB ping err: %v", err)
 		return
 	}
-	MgDB = MgClient.Database(config.Cfg.MongoDB.DefaultDb)
+	MgDB = MgClient.Database(mgCfg.DefaultDb)
 	logger.Info("Mongodb Connect..")
 	return
 }
