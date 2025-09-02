@@ -1,5 +1,7 @@
 package config
 
+import "errors"
+
 type deployEnv uint8
 
 const (
@@ -40,4 +42,20 @@ func (e deployEnv) String() string {
 		return "PROD"
 	}
 	return "UNKNOW"
+}
+
+func IsDeployEnv(s string) (deployEnv, error) {
+	switch {
+	case s == "DEV":
+		return DEV, nil
+	case s == "SIT":
+		return SIT, nil
+	case s == "UAT":
+		return UAT, nil
+	case s == "PRE_PROD":
+		return PRE_PROD, nil
+	case s == "PROD":
+		return PROD, nil
+	}
+	return 0, errors.New("unknow enum")
 }
