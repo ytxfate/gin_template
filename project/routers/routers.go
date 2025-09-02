@@ -38,7 +38,7 @@ func Init() *gin.Engine {
 	for _, opt := range options {
 		opt(api)
 	}
-	if !config.Cfg.Web.IsProdEnv {
+	if config.Cfg.Env != config.PROD {
 		// 设置 swagger 文档信息
 		apidocs.SwaggerInfo.Title = config.Cfg.Web.Title
 		apidocs.SwaggerInfo.Description = config.Cfg.Web.Description

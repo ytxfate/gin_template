@@ -46,7 +46,7 @@ var (
 func CommResp(ctx *gin.Context, code StatusCode, resp apiData, msg string) {
 	// 参数校验失败时错误信息放于resp中, 生产环境应该关闭参数错误提示
 	if err, ok := resp.(validator.ValidationErrors); ok {
-		if !config.Cfg.Web.IsProdEnv {
+		if config.Cfg.Env != config.PROD {
 			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: err.Error(), Msg: msg})
 		} else {
 			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: nil, Msg: msg})

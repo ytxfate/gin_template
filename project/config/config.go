@@ -1,13 +1,12 @@
 package config
 
 import (
-	"github.com/spf13/viper"
+	"net"
 )
 
 var Cfg *Config
 
 type Web struct {
-	IsProdEnv     bool   `yaml:"isProdEnv"`
 	Title         string `yaml:"title"`
 	Description   string `yaml:"description"`
 	Addr          string `yaml:"addr"`
@@ -16,37 +15,79 @@ type Web struct {
 	ApiPrefixPath string `yaml:"apiPrefixPath"`
 }
 
-type MongodbConf struct {
-	Url       string `yaml:"url"`       // 有此项则优先用此项进行数据库连接否则用 HOST 和 PORT 连接
-	Username  string `yaml:"username"`  // 用户名
-	Password  string `yaml:"password"`  // 密码
-	DefaultDb string `yaml:"defaultDb"` // 默认数据库
+type webOption func(*Web)
+
+func NewWeb(opts ...webOption) *Web {
+	web := &Web{
+		Title:         "gin_template",
+		Description:   "gin 模板",
+		Addr:          "0.0.0.0:8080",
+		SecretKey:     "xxxxxxxx",
+		Version:       "v1.0",
+		ApiPrefixPath: "/api",
+	}
+	for _, opt := range opts {
+		opt(web)
+	}
+	return web
 }
 
-type GaussDBConf struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	DbName   string `yaml:"dbName"`
-	Sslmode  string `yaml:"sslmode"`
+func WithTitle(title string) webOption {
+	return func(w *Web) { w.Title = title }
+}
+func WithDescription(description string) webOption {
+	return func(w *Web) { w.Description = description }
+}
+func WithAddr(addr string) webOption {
+	return func(w *Web) { w.Addr = addr }
+}
+func WithSecretKey(secretKey string) webOption {
+	return func(w *Web) { w.SecretKey = secretKey }
+}
+func WithVersion(version string) webOption {
+	return func(w *Web) { w.Version = version }
+}
+func WithApiPrefixPath(apiPrefixPath string) webOption {
+	return func(w *Web) { w.ApiPrefixPath = apiPrefixPath }
 }
 
 type Config struct {
-	Web     Web         `yaml:"web"`
-	MongoDB MongodbConf `yaml:"mongoDB"`
-	GaussDB GaussDBConf `yaml:"gaussDB"`
+	Env        deployEnv
+	Web        *Web `yaml:"web"`
+	nacosCfg   *nacosServerConfig
+	nacosToken string
 }
 
-func InitConfig() (err error) {
-	viper.SetConfigName("config") // 配置文件名称(无扩展名)
-	viper.SetConfigType("yaml")   // 如果配置文件的名称中没有扩展名，则需要配置此项
-	viper.AddConfigPath("../../") // 查找配置文件所在的路径
-	viper.AddConfigPath(".")      // 还可以在工作目录中查找配置
-	err = viper.ReadInConfig()
-	if err != nil {
-		return err
+func InitConfig(webCfg *Web, env deployEnv) {
+	if !env.IsValid() {
+		panic("env enum not match")
 	}
-	err = viper.Unmarshal(&Cfg)
-	return err
+	Cfg = &Config{
+		Env:        env,
+		Web:        webCfg,
+		nacosCfg:   nil,
+		nacosToken: "",
+	}
+	// 根据主机名自动判断一次运行环境(优先级最高)
+	if Cfg.Env != PROD {
+		_, err := net.LookupHost(nacosHost)
+		if err == nil {
+			Cfg.Env = PROD
+			Cfg.nacosCfg = NewNacosServerConfigProd()
+		}
+	}
+
+	if Cfg.nacosCfg == nil {
+		Cfg.nacosCfg = NewNacosServerConfigTest()
+	}
+
+	// 获取 Nacos AccessToken
+	var err error
+	Cfg.nacosToken, err = Cfg.nacosCfg.nacosLogin()
+	if err != nil {
+		panic(err)
+	}
+
+	// NOTE: 初始化所有中间件配置
+	initAllConfig()
 }

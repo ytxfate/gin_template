@@ -22,25 +22,22 @@ import (
 // @scope {}
 // @description OAuth protects our entity endpoints
 func main() {
-	err := config.InitConfig()
-	if err != nil {
-		panic(err)
-	}
-	logger.InitLogger()
+	config.InitConfig(config.NewWeb(config.WithAddr("0.0.0.0:8081")), config.DEV)
+	logger.InitLogger(config.Cfg.Env == config.PROD)
 	logger.Debugf("%#v", config.Cfg)
 	middleware.InitValidator()
 
 	// 数据库连接初始化
-	err = operatemongodb.InitMongoDB()
+	err := operatemongodb.InitMongoDB(config.MgConf)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
-	err = operategaussdb.InitGaussDB()
+	err = operategaussdb.InitGaussDB(config.GaussCfg)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
 
-	if config.Cfg.Web.IsProdEnv {
+	if config.Cfg.Env == config.PROD {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
