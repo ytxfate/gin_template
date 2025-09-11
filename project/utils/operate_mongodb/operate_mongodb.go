@@ -4,6 +4,7 @@ import (
 	"context"
 	"gin_template/project/utils/logger"
 	"strings"
+	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -11,8 +12,12 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
 )
 
-var MgClient *mongo.Client
-var MgDB *mongo.Database
+var (
+	MgClient  *mongo.Client
+	MgDB      *mongo.Database
+	onceConn  sync.Once
+	onceClose sync.Once
+)
 
 type MongodbConf struct {
 	Url       string `yaml:"URL"`        // 有此项则优先用此项进行数据库连接否则用 HOST 和 PORT 连接
@@ -22,7 +27,16 @@ type MongodbConf struct {
 }
 
 // 根据配置初始化连接mongodb
-func InitMongoDB(mgCfg *MongodbConf) (err error) {
+func InitMongoDB(mgCfg *MongodbConf) error {
+	var err error
+	onceConn.Do(func() {
+		err = initMongoDB(mgCfg)
+	})
+	return err
+}
+
+func initMongoDB(mgCfg *MongodbConf) error {
+	var err error
 	if mgCfg == nil {
 		mgCfg = &MongodbConf{
 			Url:       "127.0.0.1:27017",
@@ -44,25 +58,33 @@ func InitMongoDB(mgCfg *MongodbConf) (err error) {
 	MgClient, err = mongo.Connect(&opts)
 	if err != nil {
 		logger.Errorf("MongoDB connect err: %v", err)
-		return
+		return err
 	}
 	err = MgClient.Ping(ctx, readpref.Primary())
 	if err != nil {
 		logger.Errorf("MongoDB ping err: %v", err)
-		return
+		return err
 	}
 	MgDB = MgClient.Database(mgCfg.DefaultDb)
 	logger.Info("Mongodb Connect..")
-	return
+	return err
 }
 
-func Close() (err error) {
+func Close() error {
+	var err error
+	onceClose.Do(func() {
+		err = close()
+	})
+	return err
+}
+
+func close() error {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
-	err = MgClient.Disconnect(ctx)
+	err := MgClient.Disconnect(ctx)
 	if err != nil {
 		logger.Errorf("MongoDB ping err: %v", err)
 	}
 	logger.Info("Mongodb closed")
-	return
+	return nil
 }

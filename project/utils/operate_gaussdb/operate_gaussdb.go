@@ -5,12 +5,17 @@ import (
 	"database/sql"
 	"fmt"
 	"gin_template/project/utils/logger"
+	"sync"
 	"time"
 
 	_ "gitee.com/opengauss/openGauss-connector-go-pq"
 )
 
-var GaussDB *sql.DB
+var (
+	GaussDB   *sql.DB
+	onceConn  sync.Once
+	onceClose sync.Once
+)
 
 type GaussDBConf struct {
 	Host     string `yaml:"HOST"`
@@ -22,7 +27,16 @@ type GaussDBConf struct {
 }
 
 // 根据配置初始化连接mongodb
-func InitGaussDB(gsCfg *GaussDBConf) (err error) {
+func InitGaussDB(gsCfg *GaussDBConf) error {
+	var err error
+	onceConn.Do(func() {
+		err = initGaussDB(gsCfg)
+	})
+	return err
+}
+
+func initGaussDB(gsCfg *GaussDBConf) error {
+	var err error
 	if gsCfg == nil {
 		gsCfg = &GaussDBConf{
 			Host:     "127.0.0.1",
@@ -42,23 +56,31 @@ func InitGaussDB(gsCfg *GaussDBConf) (err error) {
 		gsCfg.Password, gsCfg.DbName, gsCfg.Sslmode)
 	GaussDB, err = sql.Open("opengauss", connStr)
 	if err != nil {
-		return
+		return err
 	}
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 	err = GaussDB.PingContext(ctx)
 	if err != nil {
-		return
+		return err
 	}
 	logger.Info("GaussDB connect...")
-	return
+	return err
 }
 
-func Close() (err error) {
-	err = GaussDB.Close()
+func Close() error {
+	var err error
+	onceClose.Do(func() {
+		err = close()
+	})
+	return err
+}
+
+func close() error {
+	err := GaussDB.Close()
 	if err != nil {
-		return
+		return err
 	}
 	logger.Infof("GaussDB closed")
-	return
+	return nil
 }

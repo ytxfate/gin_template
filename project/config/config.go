@@ -2,9 +2,13 @@ package config
 
 import (
 	"net"
+	"sync"
 )
 
-var Cfg *Config
+var (
+	Cfg  *Config
+	once sync.Once
+)
 
 type Web struct {
 	Title         string `yaml:"title"`
@@ -59,6 +63,12 @@ type Config struct {
 }
 
 func InitConfig(webCfg *Web, env deployEnv) {
+	once.Do(func() {
+		initConfig(webCfg, env)
+	})
+}
+
+func initConfig(webCfg *Web, env deployEnv) {
 	if !env.IsValid() {
 		panic("env enum not match")
 	}

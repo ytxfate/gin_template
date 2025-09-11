@@ -12,6 +12,7 @@ import (
 var (
 	logger  *zap.Logger
 	logLock sync.RWMutex
+	once    sync.Once
 )
 
 func SetLogger(log *zap.Logger) {
@@ -27,6 +28,12 @@ func GetLogger() *zap.Logger {
 }
 
 func InitLogger(isProd bool) {
+	once.Do(func() {
+		initLogger(isProd)
+	})
+}
+
+func initLogger(isProd bool) {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = func(t time.Time, pae zapcore.PrimitiveArrayEncoder) {
 		pae.AppendString(t.Format("2006-01-02 15:04:05.000"))
