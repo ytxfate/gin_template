@@ -1,8 +1,8 @@
 package config
 
 import (
-	"net"
 	"sync"
+	"time"
 )
 
 var (
@@ -80,8 +80,7 @@ func initConfig(webCfg *Web, env deployEnv) {
 	}
 	// 根据主机名自动判断一次运行环境(优先级最高)
 	if Cfg.Env != PROD {
-		_, err := net.LookupHost(nacosHost)
-		if err == nil {
+		if NacosHostLookup(nacosHost, time.Second) {
 			Cfg.Env = PROD
 			Cfg.nacosCfg = NewNacosServerConfigProd()
 		}

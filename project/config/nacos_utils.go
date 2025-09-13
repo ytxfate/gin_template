@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -34,9 +35,9 @@ func NewNacosServerConfigTest() *nacosServerConfig {
 		password:  base64Decoder("bmFjb3M="), // nacos
 	}
 
-	_, err := net.LookupHost(localNacosHost)
-	if err == nil {
-		cfg.addr = base64Decoder("MTI3LjAuMC4xOjg4NDg=") // 127.0.0.1:8848
+	// 临时用于本地判断, 可移除
+	if NacosHostLookup(localNacosHost, time.Second) {
+		cfg.addr = localNacosHost + ":8848"
 	}
 	return cfg
 }
@@ -147,4 +148,14 @@ func (nacosCfg *nacosServerConfig) getNacosConfig(accessToken, dataId string) (c
 	config = cr.Data.Content
 	configType = cr.Data.ContentType
 	return
+}
+
+func NacosHostLookup(hostname string, timeout time.Duration) bool {
+	if timeout == 0 {
+		timeout = time.Second
+	}
+	ctx, cancel := context.WithTimeout(context.TODO(), timeout)
+	defer cancel()
+	_, err := net.DefaultResolver.LookupHost(ctx, hostname)
+	return err == nil
 }
