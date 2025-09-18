@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	zhtrans "gin_template/project/utils/zh_trans"
 	"reflect"
 	"strings"
 
@@ -9,12 +10,16 @@ import (
 )
 
 // InitValidator 参数校验
-func InitValidator() {
+func InitValidator(locale string) error {
 	// 第一个参数是备用（fallback）的语言环境
 	// 后面的参数是应该支持的语言环境（支持多个）
 	// uni := ut.New(zhT, zhT) 也是可以的
 	// 修改gin框架中的Validator引擎属性，实现自定制
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		err := zhtrans.InitTrans(locale, v)
+		if err != nil {
+			return err
+		}
 
 		// 注册一个获取json tag的自定义方法
 		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
@@ -26,4 +31,5 @@ func InitValidator() {
 		})
 
 	}
+	return nil
 }

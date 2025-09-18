@@ -2,6 +2,8 @@ package commresp
 
 import (
 	"gin_template/project/config"
+	"gin_template/project/utils/logger"
+	zhtrans "gin_template/project/utils/zh_trans"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,11 +47,22 @@ var (
 
 func CommResp(ctx *gin.Context, code StatusCode, resp apiData, msg string) {
 	// 参数校验失败时错误信息放于resp中, 生产环境应该关闭参数错误提示
-	if err, ok := resp.(validator.ValidationErrors); ok {
+	switch err := resp.(type) {
+	case validator.ValidationErrors:
+		e := err.Translate(zhtrans.Trans)
+		logger.Infof("%#v", e)
+		if config.Cfg.Env != config.PROD {
+			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: e, Msg: msg})
+		} else {
+			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: nil, Msg: msg})
+		}
+		return
+	case error:
+		logger.Info(err.Error())
 		if config.Cfg.Env != config.PROD {
 			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: err.Error(), Msg: msg})
 		} else {
-			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: nil, Msg: msg})
+			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: nil, Msg: "请求异常"})
 		}
 		return
 	}

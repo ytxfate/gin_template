@@ -44,7 +44,10 @@ func main() {
 	), realEnv)
 	logger.InitLogger(config.Cfg.Env == config.PROD)
 	logger.Debugf("%#v", config.Cfg)
-	middleware.InitValidator()
+	err = middleware.InitValidator("zh")
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
 
 	// 数据库连接初始化
 	err = operatemongodb.InitMongoDB(config.MgConf)
