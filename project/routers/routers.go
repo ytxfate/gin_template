@@ -1,12 +1,11 @@
 package routers
 
 import (
+	"gin_template/docs/swagger"
 	"gin_template/project/config"
 	"gin_template/project/controller/auth"
 	"gin_template/project/controller/user"
 	"gin_template/project/middleware"
-
-	apidocs "gin_template/project/apidocs"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -40,11 +39,11 @@ func Init() *gin.Engine {
 	}
 	if config.Cfg.Env != config.PROD {
 		// 设置 swagger 文档信息
-		apidocs.SwaggerInfo.Title = config.Cfg.Web.Title
-		apidocs.SwaggerInfo.Description = config.Cfg.Web.Description
-		apidocs.SwaggerInfo.BasePath = prefix
-		apidocs.SwaggerInfo.Version = config.Cfg.Web.Version
-		apidocs.SwaggerInfo.Host = config.Cfg.Web.Addr
+		swagger.SwaggerInfo.Title = config.Cfg.Web.Title
+		swagger.SwaggerInfo.Description = config.Cfg.Web.Description
+		swagger.SwaggerInfo.BasePath = prefix
+		swagger.SwaggerInfo.Version = config.Cfg.Web.Version
+		swagger.SwaggerInfo.Host = config.Cfg.Web.Addr
 		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	}
 	return engine
