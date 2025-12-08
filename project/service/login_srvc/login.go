@@ -2,10 +2,10 @@ package loginsrvc
 
 import (
 	"errors"
+	commresp "gin_template/internal/comm_resp"
+	customerrors "gin_template/internal/custom_errors"
+	"gin_template/internal/jwttool"
 	userdao "gin_template/project/dao/user_dao"
-	commresp "gin_template/project/utils/comm_resp"
-	customerrors "gin_template/project/utils/custom_errors"
-	"gin_template/project/utils/jwttool"
 
 	"github.com/golang-jwt/jwt/v5"
 )

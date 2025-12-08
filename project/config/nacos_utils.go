@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gin_template/project/utils/request"
+	"gin_template/pkg/request"
 	"io"
 	"net"
 	"net/http"

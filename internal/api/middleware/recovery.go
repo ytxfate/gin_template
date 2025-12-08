@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"fmt"
-	commresp "gin_template/project/utils/comm_resp"
-	"gin_template/project/utils/logger"
+	commresp "gin_template/internal/comm_resp"
+	"gin_template/pkg/logger"
 	"runtime"
 
 	"github.com/gin-gonic/gin"

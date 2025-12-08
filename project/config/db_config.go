@@ -1,8 +1,8 @@
 package config
 
 import (
-	operategaussdb "gin_template/project/utils/operate_gaussdb"
-	operatemongodb "gin_template/project/utils/operate_mongodb"
+	operategaussdb "gin_template/pkg/operate_gaussdb"
+	operatemongodb "gin_template/pkg/operate_mongodb"
 
 	"gopkg.in/yaml.v3"
 )

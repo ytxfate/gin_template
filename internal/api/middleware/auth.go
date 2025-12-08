@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	commresp "gin_template/project/utils/comm_resp"
-	"gin_template/project/utils/jwttool"
+	commresp "gin_template/internal/comm_resp"
+	"gin_template/internal/jwttool"
 	"strings"
 
 	"github.com/gin-gonic/gin"

@@ -56,19 +56,19 @@ func WithApiPrefixPath(apiPrefixPath string) webOption {
 }
 
 type Config struct {
-	Env        deployEnv
+	Env        DeployEnv
 	Web        *Web `yaml:"web"`
 	nacosCfg   *nacosServerConfig
 	nacosToken string
 }
 
-func InitConfig(webCfg *Web, env deployEnv) {
+func InitConfig(webCfg *Web, env DeployEnv) {
 	once.Do(func() {
 		initConfig(webCfg, env)
 	})
 }
 
-func initConfig(webCfg *Web, env deployEnv) {
+func initConfig(webCfg *Web, env DeployEnv) {
 	if !env.IsValid() {
 		panic("env enum not match")
 	}

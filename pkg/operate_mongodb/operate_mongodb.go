@@ -2,7 +2,7 @@ package operatemongodb
 
 import (
 	"context"
-	"gin_template/project/utils/logger"
+	"gin_template/pkg/logger"
 	"strings"
 	"sync"
 	"time"

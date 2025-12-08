@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"gin_template/project/utils/logger"
+	"gin_template/pkg/logger"
 	"time"
 
 	"github.com/gin-gonic/gin"

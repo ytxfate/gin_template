@@ -2,17 +2,17 @@ package config
 
 import "errors"
 
-type deployEnv uint8
+type DeployEnv uint8
 
 const (
-	DEV      deployEnv = 1 << iota // 开发环境
+	DEV      DeployEnv = 1 << iota // 开发环境
 	SIT                            // SIT
 	UAT                            // UAT
 	PRE_PROD                       // 准生产
 	PROD                           // 生产
 )
 
-func (e deployEnv) IsValid() bool {
+func (e DeployEnv) IsValid() bool {
 	switch {
 	case e&DEV > 0:
 		return true
@@ -28,7 +28,7 @@ func (e deployEnv) IsValid() bool {
 	return false
 }
 
-func (e deployEnv) String() string {
+func (e DeployEnv) String() string {
 	switch {
 	case e&DEV > 0:
 		return "DEV"
@@ -44,7 +44,7 @@ func (e deployEnv) String() string {
 	return "UNKNOW"
 }
 
-func IsDeployEnv(s string) (deployEnv, error) {
+func IsDeployEnv(s string) (DeployEnv, error) {
 	switch {
 	case s == "DEV":
 		return DEV, nil

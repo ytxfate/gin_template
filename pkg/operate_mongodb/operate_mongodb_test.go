@@ -1,7 +1,7 @@
 package operatemongodb
 
 import (
-	"gin_template/project/utils/logger"
+	"gin_template/pkg/logger"
 	"testing"
 )
 

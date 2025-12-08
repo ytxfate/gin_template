@@ -1,9 +1,9 @@
 package commresp
 
 import (
+	zhtrans "gin_template/internal/zh_trans"
+	"gin_template/pkg/logger"
 	"gin_template/project/config"
-	"gin_template/project/utils/logger"
-	zhtrans "gin_template/project/utils/zh_trans"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
