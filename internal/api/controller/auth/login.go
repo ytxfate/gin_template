@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"gin_template/project/middleware"
+	"gin_template/internal/api/middleware"
 	loginsrvc "gin_template/project/service/login_srvc"
 	commresp "gin_template/project/utils/comm_resp"
 	"net/http"

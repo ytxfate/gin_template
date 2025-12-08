@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"flag"
+	"gin_template/internal/api/middleware"
+	"gin_template/internal/api/routers"
 	"gin_template/project/config"
-	"gin_template/project/middleware"
-	"gin_template/project/routers"
 	"gin_template/project/utils/logger"
 	operategaussdb "gin_template/project/utils/operate_gaussdb"
 	operatemongodb "gin_template/project/utils/operate_mongodb"

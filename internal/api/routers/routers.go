@@ -1,11 +1,11 @@
 package routers
 
 import (
+	"gin_template/internal/api/controller/auth"
+	"gin_template/internal/api/controller/user"
 	"gin_template/internal/api/docs"
+	"gin_template/internal/api/middleware"
 	"gin_template/project/config"
-	"gin_template/project/controller/auth"
-	"gin_template/project/controller/user"
-	"gin_template/project/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
