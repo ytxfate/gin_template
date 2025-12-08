@@ -15,7 +15,7 @@ type authInfo struct {
 	Password string `form:"password" json:"password" binding:"required,min=6"`
 }
 
-// loginHandler 登录接口
+// LoginHandler 登录接口
 // @Summary 登录接口
 // @Description 登录获取 jwt
 // @Description code == 1102 , 需刷新 jwt;
@@ -27,7 +27,7 @@ type authInfo struct {
 // @Param object body authInfo true "登录信息"
 // @Success 200 {object} nil
 // @Router /auth/login [post]
-func loginHandler(c *gin.Context) {
+func LoginHandler(c *gin.Context) {
 	var ai authInfo
 	err := c.ShouldBind(&ai)
 	if err != nil {
@@ -55,7 +55,7 @@ type refreshInfo struct {
 	RefreshJwt string `json:"refresh_jwt" binding:"required,min=1"`
 }
 
-// refreshTokenHandler 刷新token接口
+// RefreshTokenHandler 刷新token接口
 // @Summary 刷新token接口
 // @Description 刷新 jwt
 // @Tags 认证
@@ -65,7 +65,7 @@ type refreshInfo struct {
 // @Success 200 {object} nil
 // @Router /auth/refresh_token [post]
 // @Security OAuth2Password
-func refreshTokenHandler(c *gin.Context) {
+func RefreshTokenHandler(c *gin.Context) {
 	tk := middleware.GetHeaderAuthToken(c)
 	var ri refreshInfo
 	err := c.ShouldBind(&ri)
