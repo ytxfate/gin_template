@@ -5,14 +5,14 @@ import (
 	commresp "gin_template/internal/comm_resp"
 	customerrors "gin_template/internal/custom_errors"
 	"gin_template/internal/jwttool"
-	userdao "gin_template/project/dao/user_dao"
+	"gin_template/pkg/repository/user"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func Login(username, password string) (tk string, refreshTk string, custErr *customerrors.CustErr) {
 	// TODO: 用户信息验证
-	_, err := userdao.FindUserByUserPwd(username, password)
+	_, err := user.FindUserByUserPwd(username, password)
 	if err != nil {
 		custErr = &customerrors.CustErr{
 			Code: commresp.JwtCreateError,

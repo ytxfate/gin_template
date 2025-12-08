@@ -2,8 +2,8 @@ package auth
 
 import (
 	"gin_template/internal/api/middleware"
+	loginsrvc "gin_template/internal/api/service/login_srvc"
 	commresp "gin_template/internal/comm_resp"
-	loginsrvc "gin_template/project/service/login_srvc"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
