@@ -1,6 +1,7 @@
-package config
+package webconfig
 
 import (
+	"gin_template/pkg/config"
 	"sync"
 	"time"
 )
@@ -56,19 +57,19 @@ func WithApiPrefixPath(apiPrefixPath string) webOption {
 }
 
 type Config struct {
-	Env        DeployEnv
+	Env        config.DeployEnv
 	Web        *Web `yaml:"web"`
-	nacosCfg   *nacosServerConfig
+	nacosCfg   *config.NacosServerConfig
 	nacosToken string
 }
 
-func InitConfig(webCfg *Web, env DeployEnv) {
+func InitConfig(webCfg *Web, env config.DeployEnv) {
 	once.Do(func() {
 		initConfig(webCfg, env)
 	})
 }
 
-func initConfig(webCfg *Web, env DeployEnv) {
+func initConfig(webCfg *Web, env config.DeployEnv) {
 	if !env.IsValid() {
 		panic("env enum not match")
 	}
@@ -79,24 +80,24 @@ func initConfig(webCfg *Web, env DeployEnv) {
 		nacosToken: "",
 	}
 	// 根据主机名自动判断一次运行环境(优先级最高)
-	if Cfg.Env != PROD {
-		if NacosHostLookup(nacosHost, time.Second) {
-			Cfg.Env = PROD
-			Cfg.nacosCfg = NewNacosServerConfigProd()
+	if Cfg.Env != config.PROD {
+		if config.NacosHostLookup(config.ProdNacosHost, time.Second) {
+			Cfg.Env = config.PROD
+			Cfg.nacosCfg = config.NewNacosServerConfigProd()
 		}
 	}
 
 	if Cfg.nacosCfg == nil {
-		Cfg.nacosCfg = NewNacosServerConfigTest()
+		Cfg.nacosCfg = config.NewNacosServerConfigTest()
 	}
 
 	// 获取 Nacos AccessToken
 	var err error
-	Cfg.nacosToken, err = Cfg.nacosCfg.nacosLogin()
+	Cfg.nacosToken, err = Cfg.nacosCfg.NacosLogin()
 	if err != nil {
 		panic(err)
 	}
 
 	// NOTE: 初始化所有中间件配置
-	initAllConfig()
+	config.InitAllDBConfig(Cfg.Env, *Cfg.nacosCfg, Cfg.nacosToken)
 }

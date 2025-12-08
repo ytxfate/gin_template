@@ -5,10 +5,11 @@ import (
 	"flag"
 	"gin_template/internal/api/middleware"
 	"gin_template/internal/api/routers"
+	webconfig "gin_template/internal/web_config"
+	"gin_template/pkg/config"
 	"gin_template/pkg/gaussdb"
 	"gin_template/pkg/logger"
 	"gin_template/pkg/mongodb"
-	"gin_template/project/config"
 	"net/http"
 	"os"
 	"os/signal"
@@ -35,15 +36,15 @@ func main() {
 	if err != nil {
 		realEnv = config.DEV
 	}
-	config.InitConfig(config.NewWeb(
+	webconfig.InitConfig(webconfig.NewWeb(
 		// NOTE: 从命令行初始化部分配置, 若不需要可以注释掉
-		config.WithAddr(*addr),
-		config.WithSecretKey(*secretKey),
-		config.WithVersion(*version),
-		config.WithApiPrefixPath(*apiPrefixPath),
+		webconfig.WithAddr(*addr),
+		webconfig.WithSecretKey(*secretKey),
+		webconfig.WithVersion(*version),
+		webconfig.WithApiPrefixPath(*apiPrefixPath),
 	), realEnv)
-	logger.InitLogger(config.Cfg.Env == config.PROD)
-	logger.Debugf("%#v", config.Cfg)
+	logger.InitLogger(webconfig.Cfg.Env == config.PROD)
+	logger.Debugf("%#v", webconfig.Cfg)
 	err = middleware.InitValidator("zh")
 	if err != nil {
 		logger.Fatal(err.Error())
@@ -59,14 +60,14 @@ func main() {
 		logger.Fatal(err.Error())
 	}
 
-	if config.Cfg.Env == config.PROD {
+	if webconfig.Cfg.Env == config.PROD {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	engine := routers.Init()
 	/* =============== 优雅关停 =============== */
 	srv := &http.Server{
-		Addr:    config.Cfg.Web.Addr,
+		Addr:    webconfig.Cfg.Web.Addr,
 		Handler: engine,
 	}
 	go func() {

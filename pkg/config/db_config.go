@@ -9,12 +9,12 @@ import (
 
 var MgConf *mongodb.MongodbConf
 
-func initMgConf() {
+func initMgConf(env DeployEnv, nacosCfg NacosServerConfig, nacosToken string) {
 	dataId := "mongodb-standalone-test-test"
-	if Cfg.Env == PROD {
+	if env == PROD {
 		dataId = "mongodb-rs-database-user"
 	}
-	cfg, _, err := Cfg.nacosCfg.getNacosConfig(Cfg.nacosToken, dataId)
+	cfg, _, err := nacosCfg.getNacosConfig(nacosToken, dataId)
 	if err != nil {
 		panic(err)
 	}
@@ -26,12 +26,12 @@ func initMgConf() {
 
 var GaussCfg *gaussdb.GaussDBConf
 
-func initGaussCfg() {
+func initGaussCfg(env DeployEnv, nacosCfg NacosServerConfig, nacosToken string) {
 	dataId := "gaussdb-standalone-test-test"
-	if Cfg.Env == PROD {
+	if env == PROD {
 		dataId = "gaussdb-rs-database-user"
 	}
-	cfg, _, err := Cfg.nacosCfg.getNacosConfig(Cfg.nacosToken, dataId)
+	cfg, _, err := nacosCfg.getNacosConfig(nacosToken, dataId)
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +41,7 @@ func initGaussCfg() {
 	}
 }
 
-func initAllConfig() {
-	initMgConf()
-	initGaussCfg()
+func InitAllDBConfig(env DeployEnv, nacosCfg NacosServerConfig, nacosToken string) {
+	initMgConf(env, nacosCfg, nacosToken)
+	initGaussCfg(env, nacosCfg, nacosToken)
 }

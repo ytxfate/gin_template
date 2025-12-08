@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	nacosHost      string = "nacos-server-standalone"
-	localNacosHost string = "test-nacos-server" // 本地测试使用
+	ProdNacosHost  string = "nacos-server-standalone"
+	LocalNacosHost string = "test-nacos-server" // 本地测试使用
 )
 
-type nacosServerConfig struct {
+type NacosServerConfig struct {
 	addr      string
 	namespace string
 	group     string
@@ -26,8 +26,8 @@ type nacosServerConfig struct {
 	password  string
 }
 
-func NewNacosServerConfigTest() *nacosServerConfig {
-	cfg := &nacosServerConfig{
+func NewNacosServerConfigTest() *NacosServerConfig {
+	cfg := &NacosServerConfig{
 		addr:      base64Decoder("MTI3LjAuMC4xOjg4NDg="), // 127.0.0.1:8848
 		namespace: "public",
 		group:     "DEFAULT_GROUP",
@@ -36,15 +36,15 @@ func NewNacosServerConfigTest() *nacosServerConfig {
 	}
 
 	// 临时用于本地判断, 可移除
-	if NacosHostLookup(localNacosHost, time.Second) {
-		cfg.addr = localNacosHost + ":8848"
+	if NacosHostLookup(LocalNacosHost, time.Second) {
+		cfg.addr = LocalNacosHost + ":8848"
 	}
 	return cfg
 }
 
-func NewNacosServerConfigProd() *nacosServerConfig {
-	return &nacosServerConfig{
-		addr:      fmt.Sprintf("%s:8848", nacosHost),
+func NewNacosServerConfigProd() *NacosServerConfig {
+	return &NacosServerConfig{
+		addr:      fmt.Sprintf("%s:8848", ProdNacosHost),
 		namespace: "public",
 		group:     "DEFAULT_GROUP",
 		username:  base64Decoder("bmFjb3M="), // nacos
@@ -65,7 +65,7 @@ type loginRes struct {
 }
 
 // nacos 认证获取 token
-func (nacosCfg *nacosServerConfig) nacosLogin() (token string, err error) {
+func (nacosCfg *NacosServerConfig) NacosLogin() (token string, err error) {
 	// curl -X POST 'http://127.0.0.1:8848/nacos/v3/auth/user/login' -d 'username=xxx&password=xxx'
 	resp, err := request.NewRequest(
 		fmt.Sprintf("http://%s/nacos/v3/auth/user/login", nacosCfg.addr),
@@ -114,7 +114,7 @@ type confResp struct {
 }
 
 // 获取 Nacos 配置
-func (nacosCfg *nacosServerConfig) getNacosConfig(accessToken, dataId string) (config string, configType string, err error) {
+func (nacosCfg *NacosServerConfig) getNacosConfig(accessToken, dataId string) (config string, configType string, err error) {
 	// curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/ns/instance/list?serviceName=quickstart.test.service&accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2b3lhZ2VyIiwiZXhwIjoxNzU2NzEwNjM1fQ.t7V7uLFL0y8bHSeZ-tMWykI6jlr0pcNpnR-b_LbpEis'
 	resp, err := request.NewRequest(
 		fmt.Sprintf(

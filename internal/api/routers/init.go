@@ -3,7 +3,8 @@ package routers
 import (
 	"gin_template/internal/api/docs"
 	"gin_template/internal/api/middleware"
-	"gin_template/project/config"
+	webconfig "gin_template/internal/web_config"
+	"gin_template/pkg/config"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -29,19 +30,19 @@ func Init() *gin.Engine {
 	engine.Use(middleware.Logger())
 	engine.Use(middleware.CORS())
 
-	prefix := config.Cfg.Web.ApiPrefixPath + "/" + config.Cfg.Web.Version
+	prefix := webconfig.Cfg.Web.ApiPrefixPath + "/" + webconfig.Cfg.Web.Version
 	api := engine.Group(prefix)
 	options := include(routerGroup)
 	for _, opt := range options {
 		opt(api)
 	}
-	if config.Cfg.Env != config.PROD {
+	if webconfig.Cfg.Env != config.PROD {
 		// 设置 swagger 文档信息
-		docs.SwaggerInfo.Title = config.Cfg.Web.Title
-		docs.SwaggerInfo.Description = config.Cfg.Web.Description
+		docs.SwaggerInfo.Title = webconfig.Cfg.Web.Title
+		docs.SwaggerInfo.Description = webconfig.Cfg.Web.Description
 		docs.SwaggerInfo.BasePath = prefix
-		docs.SwaggerInfo.Version = config.Cfg.Web.Version
-		docs.SwaggerInfo.Host = config.Cfg.Web.Addr
+		docs.SwaggerInfo.Version = webconfig.Cfg.Web.Version
+		docs.SwaggerInfo.Host = webconfig.Cfg.Web.Addr
 		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	}
 	return engine
