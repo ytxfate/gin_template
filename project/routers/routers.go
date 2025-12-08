@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"gin_template/docs/swagger"
+	"gin_template/internal/api/docs"
 	"gin_template/project/config"
 	"gin_template/project/controller/auth"
 	"gin_template/project/controller/user"
@@ -39,11 +39,11 @@ func Init() *gin.Engine {
 	}
 	if config.Cfg.Env != config.PROD {
 		// 设置 swagger 文档信息
-		swagger.SwaggerInfo.Title = config.Cfg.Web.Title
-		swagger.SwaggerInfo.Description = config.Cfg.Web.Description
-		swagger.SwaggerInfo.BasePath = prefix
-		swagger.SwaggerInfo.Version = config.Cfg.Web.Version
-		swagger.SwaggerInfo.Host = config.Cfg.Web.Addr
+		docs.SwaggerInfo.Title = config.Cfg.Web.Title
+		docs.SwaggerInfo.Description = config.Cfg.Web.Description
+		docs.SwaggerInfo.BasePath = prefix
+		docs.SwaggerInfo.Version = config.Cfg.Web.Version
+		docs.SwaggerInfo.Host = config.Cfg.Web.Addr
 		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	}
 	return engine
