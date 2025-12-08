@@ -5,7 +5,7 @@ import (
 	"flag"
 	"gin_template/internal/api/middleware"
 	"gin_template/internal/api/routers"
-	webconfig "gin_template/internal/web_config"
+	webconfig "gin_template/internal/api/web_config"
 	"gin_template/pkg/config"
 	"gin_template/pkg/gaussdb"
 	"gin_template/pkg/logger"

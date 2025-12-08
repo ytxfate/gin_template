@@ -1,10 +1,10 @@
 package commresp
 
 import (
-	webconfig "gin_template/internal/web_config"
-	zhtrans "gin_template/internal/zh_trans"
+	webconfig "gin_template/internal/api/web_config"
 	"gin_template/pkg/config"
 	"gin_template/pkg/logger"
+	zhtrans "gin_template/pkg/zh_trans"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

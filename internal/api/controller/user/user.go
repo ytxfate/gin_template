@@ -1,7 +1,7 @@
 package user
 
 import (
-	commresp "gin_template/internal/comm_resp"
+	commresp "gin_template/pkg/comm_resp"
 	"gin_template/pkg/logger"
 
 	"github.com/gin-gonic/gin"

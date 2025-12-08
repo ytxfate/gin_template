@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	commresp "gin_template/internal/comm_resp"
+	commresp "gin_template/pkg/comm_resp"
 
 	"github.com/gin-gonic/gin"
 )
