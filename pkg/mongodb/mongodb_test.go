@@ -1,4 +1,4 @@
-package operatemongodb
+package mongodb
 
 import (
 	"gin_template/pkg/logger"

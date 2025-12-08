@@ -1,4 +1,4 @@
-package operatemongodb
+package mongodb
 
 import (
 	"context"

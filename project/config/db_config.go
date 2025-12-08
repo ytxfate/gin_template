@@ -1,13 +1,13 @@
 package config
 
 import (
-	operategaussdb "gin_template/pkg/operate_gaussdb"
-	operatemongodb "gin_template/pkg/operate_mongodb"
+	gaussdb "gin_template/pkg/gaussdb"
+	mongodb "gin_template/pkg/mongodb"
 
 	"gopkg.in/yaml.v3"
 )
 
-var MgConf *operatemongodb.MongodbConf
+var MgConf *mongodb.MongodbConf
 
 func initMgConf() {
 	dataId := "mongodb-standalone-test-test"
@@ -24,7 +24,7 @@ func initMgConf() {
 	}
 }
 
-var GaussCfg *operategaussdb.GaussDBConf
+var GaussCfg *gaussdb.GaussDBConf
 
 func initGaussCfg() {
 	dataId := "gaussdb-standalone-test-test"

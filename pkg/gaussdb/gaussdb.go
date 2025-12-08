@@ -1,4 +1,4 @@
-package operategaussdb
+package gaussdb
 
 import (
 	"context"

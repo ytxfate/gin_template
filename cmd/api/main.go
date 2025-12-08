@@ -5,9 +5,9 @@ import (
 	"flag"
 	"gin_template/internal/api/middleware"
 	"gin_template/internal/api/routers"
+	"gin_template/pkg/gaussdb"
 	"gin_template/pkg/logger"
-	operategaussdb "gin_template/pkg/operate_gaussdb"
-	operatemongodb "gin_template/pkg/operate_mongodb"
+	"gin_template/pkg/mongodb"
 	"gin_template/project/config"
 	"net/http"
 	"os"
@@ -50,11 +50,11 @@ func main() {
 	}
 
 	// 数据库连接初始化
-	err = operatemongodb.InitMongoDB(config.MgConf)
+	err = mongodb.InitMongoDB(config.MgConf)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
-	err = operategaussdb.InitGaussDB(config.GaussCfg)
+	err = gaussdb.InitGaussDB(config.GaussCfg)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
@@ -80,11 +80,11 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	// 关闭数据库连接
-	err = operatemongodb.Close()
+	err = mongodb.Close()
 	if err != nil {
 		logger.Error(err.Error())
 	}
-	err = operategaussdb.Close()
+	err = gaussdb.Close()
 	if err != nil {
 		logger.Error(err.Error())
 	}
