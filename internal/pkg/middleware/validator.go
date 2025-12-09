@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	zhtrans "gin_template/pkg/zh_trans"
+	"gin_template/internal/pkg/zhtrans"
 	"reflect"
 	"strings"
 

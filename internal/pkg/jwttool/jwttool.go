@@ -3,7 +3,7 @@ package jwttool
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	webconfig "gin_template/internal/api/web_config"
+	webconfig "gin_template/internal/api/web-config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

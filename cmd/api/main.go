@@ -4,11 +4,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"gin_template/internal/api/middleware"
 	"gin_template/internal/api/routers"
-	webconfig "gin_template/internal/api/web_config"
+	webconfig "gin_template/internal/api/web-config"
+	"gin_template/internal/pkg/middleware"
 	"gin_template/pkg/config"
-	"gin_template/pkg/gaussdb"
 	"gin_template/pkg/logger"
 	"gin_template/pkg/mongodb"
 	"net/http"
@@ -72,10 +71,10 @@ func main() {
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
-	err = gaussdb.InitGaussDB(config.GaussCfg)
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
+	// err = gaussdb.InitGaussDB(config.GaussCfg)
+	// if err != nil {
+	// 	logger.Fatal(err.Error())
+	// }
 
 	if webconfig.Cfg.Env == config.PROD {
 		gin.SetMode(gin.ReleaseMode)
@@ -102,10 +101,10 @@ func main() {
 	if err != nil {
 		logger.Error(err.Error())
 	}
-	err = gaussdb.Close()
-	if err != nil {
-		logger.Error(err.Error())
-	}
+	// err = gaussdb.Close()
+	// if err != nil {
+	// 	logger.Error(err.Error())
+	// }
 
 	logger.Info("shutdown server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

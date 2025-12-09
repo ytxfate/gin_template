@@ -2,8 +2,8 @@ package routers
 
 import (
 	"gin_template/internal/api/docs"
-	"gin_template/internal/api/middleware"
-	webconfig "gin_template/internal/api/web_config"
+	webconfig "gin_template/internal/api/web-config"
+	"gin_template/internal/pkg/middleware"
 	"gin_template/pkg/config"
 
 	"github.com/gin-gonic/gin"

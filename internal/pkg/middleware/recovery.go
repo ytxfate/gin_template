@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	commresp "gin_template/pkg/comm_resp"
+	"gin_template/internal/pkg/commresp"
 	"gin_template/pkg/logger"
 	"runtime"
 

@@ -1,6 +1,6 @@
 package customerrors
 
-import commresp "gin_template/pkg/comm_resp"
+import "gin_template/internal/pkg/commresp"
 
 type CustErr struct {
 	Code commresp.StatusCode
