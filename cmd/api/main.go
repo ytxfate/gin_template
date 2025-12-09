@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"gin_template/internal/api/middleware"
 	"gin_template/internal/api/routers"
 	webconfig "gin_template/internal/api/web_config"
@@ -19,12 +20,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var ( // 构建信息记录
+	gitHash      string
+	buildTime    string
+	goVersion    string
+	remoteOrigin string
+)
+
 // NOTE: 从命令行初始化部分参数 及 初始化部分默认配置数值
 var addr = flag.String("a", "0.0.0.0:8081", "服务监听地址[ip:port],缺失ip可能导致swagger文档异常")
 var secretKey = flag.String("s", "xxxxxxxx", "密钥")
 var version = flag.String("v", "v1.0", "版本")
 var apiPrefixPath = flag.String("p", "/api", "接口前缀")
 var env = flag.String("e", "DEV", "运行环境[生产环境判断优先]{ DEV/SIT/UAT/PRE_PROD/PROD }")
+var buildInfo = flag.Bool("version", false, "输出版本构建信息")
 
 // @securitydefinitions.oauth2.password OAuth2Password
 // @tokenUrl /api/v1.0/auth/login
@@ -32,6 +41,14 @@ var env = flag.String("e", "DEV", "运行环境[生产环境判断优先]{ DEV/S
 // @description OAuth protects our entity endpoints
 func main() {
 	flag.Parse()
+	if *buildInfo {
+		fmt.Printf("Build TimeStamp   : %s\n", buildTime)
+		fmt.Printf("GoLang Version    : %s\n", goVersion)
+		fmt.Printf("Git Remote Origin : %s\n", remoteOrigin)
+		fmt.Printf("Git Commit Hash   : %s\n", gitHash)
+		return
+	}
+
 	realEnv, err := config.IsDeployEnv(*env)
 	if err != nil {
 		realEnv = config.DEV
