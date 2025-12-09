@@ -16,7 +16,7 @@ func initMgConf(env deployenv.DeployEnv, nacosToken string) {
 	if env == deployenv.PROD {
 		dataId = "mongodb-rs-database-user"
 	}
-	cfg, _, err := nacos.NacosCfg.GetConfig(nacosToken, dataId)
+	cfg, _, err := nacos.NacosCli.GetConfig(nacosToken, dataId)
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +33,7 @@ func initGaussCfg(env deployenv.DeployEnv, nacosToken string) {
 	if env == deployenv.PROD {
 		dataId = "gaussdb-rs-database-user"
 	}
-	cfg, _, err := nacos.NacosCfg.GetConfig(nacosToken, dataId)
+	cfg, _, err := nacos.NacosCli.GetConfig(nacosToken, dataId)
 	if err != nil {
 		panic(err)
 	}
@@ -44,7 +44,7 @@ func initGaussCfg(env deployenv.DeployEnv, nacosToken string) {
 }
 
 func InitAllDBConfig(env deployenv.DeployEnv) error {
-	token, err := nacos.NacosCfg.Login()
+	token, err := nacos.NacosCli.Login()
 	if err != nil {
 		return err
 	}

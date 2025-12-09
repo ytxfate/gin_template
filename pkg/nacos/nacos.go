@@ -27,16 +27,26 @@ type nacosServerConfig struct {
 	password  string
 }
 
+type cli struct{}
+
 var (
-	NacosCfg *nacosServerConfig
+	NacosCli *cli
 	onceInit sync.Once
 )
+
+var nacosCfg = &nacosServerConfig{
+	addr:      base64Decoder("MTI3LjAuMC4xOjg4NDg="), // 127.0.0.1:8848
+	namespace: "public",
+	group:     "DEFAULT_GROUP",
+	username:  base64Decoder("bmFjb3M="), // nacos
+	password:  base64Decoder("bmFjb3M="), // nacos
+}
 
 func InitNacos(env deployenv.DeployEnv) deployenv.DeployEnv {
 	var realEnv = env
 	onceInit.Do(func() {
 		if env == deployenv.PROD || hostlookup.HostLookup(prodNacosHost, time.Second) {
-			NacosCfg = &nacosServerConfig{
+			nacosCfg = &nacosServerConfig{
 				addr:      prodNacosHost + ":8848",
 				namespace: "public",
 				group:     "DEFAULT_GROUP",
@@ -45,16 +55,9 @@ func InitNacos(env deployenv.DeployEnv) deployenv.DeployEnv {
 			}
 			realEnv = deployenv.PROD
 		}
-		NacosCfg = &nacosServerConfig{
-			addr:      base64Decoder("MTI3LjAuMC4xOjg4NDg="), // 127.0.0.1:8848
-			namespace: "public",
-			group:     "DEFAULT_GROUP",
-			username:  base64Decoder("bmFjb3M="), // nacos
-			password:  base64Decoder("bmFjb3M="), // nacos
-		}
 		// 临时用于本地判断, 可移除
 		if hostlookup.HostLookup(localNacosHost, time.Second) {
-			NacosCfg.addr = localNacosHost + ":8848"
+			nacosCfg.addr = localNacosHost + ":8848"
 		}
 	})
 	return realEnv
@@ -73,7 +76,7 @@ type loginRes struct {
 }
 
 // nacos 认证获取 token
-func (nacosCfg *nacosServerConfig) Login() (token string, err error) {
+func (c *cli) Login() (token string, err error) {
 	// curl -X POST 'http://127.0.0.1:8848/nacos/v3/auth/user/login' -d 'username=xxx&password=xxx'
 	resp, err := request.NewRequest(
 		fmt.Sprintf("http://%s/nacos/v3/auth/user/login", nacosCfg.addr),
@@ -122,7 +125,7 @@ type confResp struct {
 }
 
 // 获取 Nacos 配置
-func (nacosCfg *nacosServerConfig) GetConfig(accessToken, dataId string) (config string, configType string, err error) {
+func (c *cli) GetConfig(accessToken, dataId string) (config string, configType string, err error) {
 	// curl -X GET 'http://127.0.0.1:8848/nacos/v3/client/ns/instance/list?serviceName=quickstart.test.service&accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2b3lhZ2VyIiwiZXhwIjoxNzU2NzEwNjM1fQ.t7V7uLFL0y8bHSeZ-tMWykI6jlr0pcNpnR-b_LbpEis'
 	resp, err := request.NewRequest(
 		fmt.Sprintf(
