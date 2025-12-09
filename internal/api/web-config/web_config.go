@@ -1,9 +1,7 @@
 package webconfig
 
 import (
-	"gin_template/configs"
 	"gin_template/pkg/deployenv"
-	"gin_template/pkg/nacos"
 	"sync"
 )
 
@@ -72,15 +70,8 @@ func initConfig(webCfg *Web, env deployenv.DeployEnv) {
 	if !env.IsValid() {
 		panic("env enum not match")
 	}
-	env = nacos.InitNacos(env)
 	Cfg = &Config{
 		Env: env,
 		Web: webCfg,
-	}
-	// 根据主
-	// NOTE: 初始化所有中间件配置
-	err := configs.InitAllDBConfig(Cfg.Env)
-	if err != nil {
-		panic(err)
 	}
 }

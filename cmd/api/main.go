@@ -11,6 +11,7 @@ import (
 	"gin_template/pkg/deployenv"
 	"gin_template/pkg/logger"
 	"gin_template/pkg/mongodb"
+	"gin_template/pkg/nacos"
 	"net/http"
 	"os"
 	"os/signal"
@@ -53,6 +54,9 @@ func main() {
 	if err != nil {
 		realEnv = deployenv.DEV
 	}
+	// 根据 Nacos 判断运行环境
+	realEnv = nacos.InitNacos(realEnv)
+	// 初始化 web 配置
 	webconfig.InitConfig(webconfig.NewWeb(
 		// NOTE: 从命令行初始化部分配置, 若不需要可以注释掉
 		webconfig.WithAddr(*addr),
@@ -60,8 +64,15 @@ func main() {
 		webconfig.WithVersion(*version),
 		webconfig.WithApiPrefixPath(*apiPrefixPath),
 	), realEnv)
+	// 初始化日志服务
 	logger.InitLogger(webconfig.Cfg.Env == deployenv.PROD)
 	logger.Debugf("%#v", webconfig.Cfg)
+	// 初始化所有中间件配置
+	err = configs.InitAllDBConfig(realEnv)
+	if err != nil {
+		panic(err)
+	}
+	// 参数校验中文翻译
 	err = middleware.InitValidator("zh")
 	if err != nil {
 		logger.Fatal(err.Error())
