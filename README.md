@@ -1,6 +1,16 @@
 # gin_template
 gin 模板
 
+> start
+```bash
+cd cmd/api 
+swag init -o ../../internal/api/docs -g cmd/api/main.go -d ../../ && go run .
+```
+
+> build
+```bash
+bash scripts/amd_arm_build.sh -m api -v 1.0.0
+```
 
 > database container command
 ```bash
