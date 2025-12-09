@@ -4,10 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"gin_template/configs"
 	"gin_template/internal/api/routers"
 	webconfig "gin_template/internal/api/web-config"
 	"gin_template/internal/pkg/middleware"
-	"gin_template/pkg/config"
+	"gin_template/pkg/deployenv"
 	"gin_template/pkg/logger"
 	"gin_template/pkg/mongodb"
 	"net/http"
@@ -48,9 +49,9 @@ func main() {
 		return
 	}
 
-	realEnv, err := config.IsDeployEnv(*env)
+	realEnv, err := deployenv.IsDeployEnv(*env)
 	if err != nil {
-		realEnv = config.DEV
+		realEnv = deployenv.DEV
 	}
 	webconfig.InitConfig(webconfig.NewWeb(
 		// NOTE: 从命令行初始化部分配置, 若不需要可以注释掉
@@ -59,7 +60,7 @@ func main() {
 		webconfig.WithVersion(*version),
 		webconfig.WithApiPrefixPath(*apiPrefixPath),
 	), realEnv)
-	logger.InitLogger(webconfig.Cfg.Env == config.PROD)
+	logger.InitLogger(webconfig.Cfg.Env == deployenv.PROD)
 	logger.Debugf("%#v", webconfig.Cfg)
 	err = middleware.InitValidator("zh")
 	if err != nil {
@@ -67,7 +68,7 @@ func main() {
 	}
 
 	// 数据库连接初始化
-	err = mongodb.InitMongoDB(config.MgConf)
+	err = mongodb.InitMongoDB(configs.MgConf)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
@@ -76,7 +77,7 @@ func main() {
 	// 	logger.Fatal(err.Error())
 	// }
 
-	if webconfig.Cfg.Env == config.PROD {
+	if webconfig.Cfg.Env == deployenv.PROD {
 		gin.SetMode(gin.ReleaseMode)
 	}
 

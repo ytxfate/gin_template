@@ -3,7 +3,7 @@ package commresp
 import (
 	webconfig "gin_template/internal/api/web-config"
 	"gin_template/internal/pkg/zhtrans"
-	"gin_template/pkg/config"
+	"gin_template/pkg/deployenv"
 	"gin_template/pkg/logger"
 	"net/http"
 
@@ -52,7 +52,7 @@ func CommResp(ctx *gin.Context, code StatusCode, resp apiData, msg string) {
 	case validator.ValidationErrors:
 		e := err.Translate(zhtrans.Trans)
 		logger.Infof("%#v", e)
-		if webconfig.Cfg.Env != config.PROD {
+		if webconfig.Cfg.Env != deployenv.PROD {
 			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: e, Msg: msg})
 		} else {
 			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: nil, Msg: msg})
@@ -60,7 +60,7 @@ func CommResp(ctx *gin.Context, code StatusCode, resp apiData, msg string) {
 		return
 	case error:
 		logger.Info(err.Error())
-		if webconfig.Cfg.Env != config.PROD {
+		if webconfig.Cfg.Env != deployenv.PROD {
 			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: err.Error(), Msg: msg})
 		} else {
 			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: nil, Msg: "请求异常"})

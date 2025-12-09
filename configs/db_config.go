@@ -1,20 +1,22 @@
-package config
+package configs
 
 import (
+	"gin_template/pkg/deployenv"
 	gaussdb "gin_template/pkg/gaussdb"
 	mongodb "gin_template/pkg/mongodb"
+	"gin_template/pkg/nacos"
 
 	"gopkg.in/yaml.v3"
 )
 
 var MgConf *mongodb.MongodbConf
 
-func initMgConf(env DeployEnv, nacosCfg NacosServerConfig, nacosToken string) {
+func initMgConf(env deployenv.DeployEnv, nacosToken string) {
 	dataId := "mongodb-standalone-test-test"
-	if env == PROD {
+	if env == deployenv.PROD {
 		dataId = "mongodb-rs-database-user"
 	}
-	cfg, _, err := nacosCfg.getNacosConfig(nacosToken, dataId)
+	cfg, _, err := nacos.NacosCfg.GetConfig(nacosToken, dataId)
 	if err != nil {
 		panic(err)
 	}
@@ -26,12 +28,12 @@ func initMgConf(env DeployEnv, nacosCfg NacosServerConfig, nacosToken string) {
 
 var GaussCfg *gaussdb.GaussDBConf
 
-func initGaussCfg(env DeployEnv, nacosCfg NacosServerConfig, nacosToken string) {
+func initGaussCfg(env deployenv.DeployEnv, nacosToken string) {
 	dataId := "gaussdb-standalone-test-test"
-	if env == PROD {
+	if env == deployenv.PROD {
 		dataId = "gaussdb-rs-database-user"
 	}
-	cfg, _, err := nacosCfg.getNacosConfig(nacosToken, dataId)
+	cfg, _, err := nacos.NacosCfg.GetConfig(nacosToken, dataId)
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +43,12 @@ func initGaussCfg(env DeployEnv, nacosCfg NacosServerConfig, nacosToken string) 
 	}
 }
 
-func InitAllDBConfig(env DeployEnv, nacosCfg NacosServerConfig, nacosToken string) {
-	initMgConf(env, nacosCfg, nacosToken)
-	initGaussCfg(env, nacosCfg, nacosToken)
+func InitAllDBConfig(env deployenv.DeployEnv) error {
+	token, err := nacos.NacosCfg.Login()
+	if err != nil {
+		return err
+	}
+	initMgConf(env, token)
+	initGaussCfg(env, token)
+	return nil
 }

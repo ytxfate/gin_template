@@ -4,7 +4,7 @@ import (
 	"gin_template/internal/api/docs"
 	webconfig "gin_template/internal/api/web-config"
 	"gin_template/internal/pkg/middleware"
-	"gin_template/pkg/config"
+	"gin_template/pkg/deployenv"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -36,7 +36,7 @@ func Init() *gin.Engine {
 	for _, opt := range options {
 		opt(api)
 	}
-	if webconfig.Cfg.Env != config.PROD {
+	if webconfig.Cfg.Env != deployenv.PROD {
 		// 设置 swagger 文档信息
 		docs.SwaggerInfo.Title = webconfig.Cfg.Web.Title
 		docs.SwaggerInfo.Description = webconfig.Cfg.Web.Description

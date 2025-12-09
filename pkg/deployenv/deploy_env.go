@@ -1,4 +1,4 @@
-package config
+package deployenv
 
 import "errors"
 
