@@ -5,7 +5,7 @@ import (
 	"gin_template/internal/pkg/commresp"
 	"gin_template/internal/pkg/customerrors"
 	"gin_template/internal/pkg/jwttool"
-	"gin_template/internal/pkg/repository/user"
+	"gin_template/internal/repository/user"
 
 	"github.com/golang-jwt/jwt/v5"
 )
