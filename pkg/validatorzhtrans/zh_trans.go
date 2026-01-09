@@ -1,4 +1,4 @@
-package zhtrans
+package validatorzhtrans
 
 import (
 	"fmt"

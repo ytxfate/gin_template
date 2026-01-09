@@ -22,8 +22,8 @@ echo "build version: $version"
 module=${module:-$(ls cmd | head -n 1)}
 echo "build module: $module"
 
-amd64_name="$go_mod-x86_64-$version"
-arm64_name="$go_mod-arm64-$version"
+amd64_name="$go_mod-$module-x86_64-$version"
+arm64_name="$go_mod-$module-arm64-$version"
 
 build_time=$(date "+%Y-%m-%d %H:%M:%S")
 go_version=$(go version)
@@ -45,10 +45,10 @@ fi
 # linux amd64 
 cd $module_path
 export GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && \
-    go build -a -ldflags "-extldflags '-static' $build_infos" -o "$amd64_name"
-cd ../../ && mv $module_path/$amd64_name ./
+    go build -a -ldflags "-extldflags '-static' $build_infos" -o "../../$amd64_name"
+cd ../../ 
 # linux arm64 
 cd $module_path
 export GOOS=linux GOARCH=arm64 CGO_ENABLED=0 && \
-    go build -a -ldflags "$build_infos" -o "$arm64_name"
-cd ../../ && mv $module_path/$arm64_name ./
+    go build -a -ldflags "$build_infos" -o "../../$arm64_name"
+cd ../../ 

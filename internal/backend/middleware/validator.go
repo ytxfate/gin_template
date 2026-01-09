@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"gin_template/internal/pkg/zhtrans"
+	"gin_template/pkg/validatorzhtrans"
 	"reflect"
 	"strings"
 
@@ -16,7 +16,7 @@ func InitValidator(locale string) error {
 	// uni := ut.New(zhT, zhT) 也是可以的
 	// 修改gin框架中的Validator引擎属性，实现自定制
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		err := zhtrans.InitTrans(locale, v)
+		err := validatorzhtrans.InitTrans(locale, v)
 		if err != nil {
 			return err
 		}

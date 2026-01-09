@@ -3,13 +3,13 @@ gin 模板
 
 > start
 ```bash
-cd cmd/api 
-swag init -o ../../internal/api/docs -g cmd/api/main.go -d ../../ && go run .
+cd cmd/backend 
+swag init -o ../../internal/backend/docs -g cmd/backend/main.go -d ../../ && go run .
 ```
 
 > build
 ```bash
-bash scripts/amd_arm_build.sh -m api -v 1.0.0
+bash scripts/amd_arm_build.sh -m backend -v 1.0.0
 ```
 
 > database container command

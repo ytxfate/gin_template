@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"gin_template/internal/api/controller/auth"
-	"gin_template/internal/api/controller/user"
+	"gin_template/internal/backend/controller/auth"
+	"gin_template/internal/backend/controller/user"
 
 	"github.com/gin-gonic/gin"
 )
