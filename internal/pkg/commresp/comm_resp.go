@@ -1,10 +1,10 @@
 package commresp
 
 import (
-	webconfig "gin_template/internal/api/web-config"
-	"gin_template/internal/pkg/zhtrans"
+	"gin_template/internal/backend/webconfig"
 	"gin_template/pkg/deployenv"
 	"gin_template/pkg/logger"
+	"gin_template/pkg/validatorzhtrans"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -50,7 +50,7 @@ func CommResp(ctx *gin.Context, code StatusCode, resp apiData, msg string) {
 	// 参数校验失败时错误信息放于resp中, 生产环境应该关闭参数错误提示
 	switch err := resp.(type) {
 	case validator.ValidationErrors:
-		e := err.Translate(zhtrans.Trans)
+		e := err.Translate(validatorzhtrans.Trans)
 		logger.Infof("%#v", e)
 		if webconfig.Cfg.Env != deployenv.PROD {
 			ctx.JSON(http.StatusOK, commRespBody{Code: code, Resp: e, Msg: msg})

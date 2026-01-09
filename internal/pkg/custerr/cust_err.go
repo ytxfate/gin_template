@@ -1,4 +1,4 @@
-package customerrors
+package custerr
 
 import "gin_template/internal/pkg/commresp"
 

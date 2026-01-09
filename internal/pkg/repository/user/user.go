@@ -1,6 +1,6 @@
 package user
 
-import "gin_template/internal/models"
+import "gin_template/internal/pkg/models"
 
 func FindUserByUserPwd(username, password string) (*models.User, error) {
 	// TODO: db query
