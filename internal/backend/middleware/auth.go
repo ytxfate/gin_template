@@ -1,8 +1,9 @@
 package middleware
 
 import (
+	"gin_template/internal/backend/jwttool"
+	"gin_template/internal/backend/webconfig"
 	"gin_template/internal/pkg/commresp"
-	"gin_template/internal/pkg/jwttool"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +30,7 @@ func AuthMiddleware() func(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		stat, jwtInfo, err := jwttool.ValidateJWT(token)
+		stat, jwtInfo, err := jwttool.ValidateJWT(token, webconfig.Cfg.Web.SecretKey)
 		if !stat || err != nil {
 			commresp.CommResp(c, commresp.JwtParseError, nil, "登录已过期, 请重新登录")
 			c.Abort()

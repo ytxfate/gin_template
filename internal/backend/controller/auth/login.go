@@ -1,9 +1,9 @@
 package auth
 
 import (
+	"gin_template/internal/backend/middleware"
 	"gin_template/internal/pkg/commresp"
-	"gin_template/internal/pkg/middleware"
-	"gin_template/internal/service/loginsrvc"
+	"gin_template/internal/pkg/service/loginsrvc"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
