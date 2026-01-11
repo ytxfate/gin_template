@@ -6,7 +6,7 @@ import (
 	"gin_template/internal/backend/webconfig"
 	"gin_template/internal/pkg/commresp"
 	"gin_template/internal/pkg/custerr"
-	"gin_template/internal/pkg/repository/user"
+	"gin_template/internal/pkg/model_repo/user"
 
 	"github.com/golang-jwt/jwt/v5"
 )
