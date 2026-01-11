@@ -1,6 +1,7 @@
 package webconfig
 
 import (
+	"encoding/json"
 	"gin_template/pkg/deployenv"
 	"sync"
 )
@@ -14,7 +15,7 @@ type Web struct {
 	Title         string `yaml:"title"`
 	Description   string `yaml:"description"`
 	Addr          string `yaml:"addr"`
-	SecretKey     string `yaml:"secretKey"`
+	SecretKey     string `yaml:"secretKey" json:"-"`
 	Version       string `yaml:"version"`
 	ApiPrefixPath string `yaml:"apiPrefixPath"`
 }
@@ -74,4 +75,9 @@ func initConfig(webCfg *Web, env deployenv.DeployEnv) {
 		Env: env,
 		Web: webCfg,
 	}
+}
+
+func (c *Config) String() string {
+	s, _ := json.Marshal(c)
+	return string(s)
 }

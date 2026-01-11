@@ -66,7 +66,7 @@ func main() {
 	), realEnv)
 	// 初始化日志服务
 	logger.InitLogger(webconfig.Cfg.Env == deployenv.PROD)
-	logger.Debugf("%#v", webconfig.Cfg)
+	logger.Debugf("%s", webconfig.Cfg)
 	// 初始化所有中间件配置
 	err = configs.InitAllDBConfig(realEnv)
 	if err != nil {
