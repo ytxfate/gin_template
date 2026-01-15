@@ -50,5 +50,5 @@ cd ../../
 # linux arm64 
 cd $module_path
 export GOOS=linux GOARCH=arm64 CGO_ENABLED=0 && \
-    go build -a -ldflags "$build_infos" -o "../../$arm64_name"
+    go build -a -ldflags "-extldflags '-static' $build_infos" -o "../../$arm64_name"
 cd ../../ 
