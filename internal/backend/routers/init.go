@@ -5,6 +5,7 @@ import (
 	"gin_template/internal/backend/middleware"
 	"gin_template/internal/backend/webconfig"
 	"gin_template/pkg/deployenv"
+	"gin_template/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -44,6 +45,7 @@ func Init() *gin.Engine {
 		docs.SwaggerInfo.Version = webconfig.Cfg.Web.Version
 		docs.SwaggerInfo.Host = webconfig.Cfg.Web.Addr
 		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+		logger.Debugf("swagger docs: http://%s%s/swagger/index.html", webconfig.Cfg.Web.Addr, prefix)
 	}
 	return engine
 }

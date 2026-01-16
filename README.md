@@ -4,7 +4,7 @@ gin 模板
 > start
 ```bash
 cd cmd/backend 
-swag init -o ../../internal/backend/docs -g cmd/backend/main.go -d ../../ && go run .
+swag init -ot go -o ../../internal/backend/docs -g cmd/backend/main.go -d ../../ && go run .
 ```
 
 > build

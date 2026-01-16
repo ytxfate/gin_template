@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"gin_template/internal/backend/docs"
 	"gin_template/pkg/logger"
 	"time"
 
@@ -22,5 +23,7 @@ func Logger() gin.HandlerFunc {
 			cost,
 			c.Errors.ByType(gin.ErrorTypePrivate).String(),
 		))
+		logger.Debugf("%+v",
+			docs.GetApiTagsAndSummary(c.Request.URL.Path, c.Request.Method))
 	}
 }
