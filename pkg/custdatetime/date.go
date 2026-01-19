@@ -5,15 +5,22 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
+)
+
+const (
+	dDefaultFmt = time.DateOnly
+	dCompactFmt = "20060102"
 )
 
 type Date time.Time
 
 func (d *Date) UnmarshalJSON(data []byte) (err error) {
-	t, err := time.Parse(time.DateOnly, string(data[1:len(data)-1]))
+	ds := strings.Trim(string(data), "\"")
+	t, err := time.Parse(dDefaultFmt, ds)
 	if err != nil {
-		t, err = time.Parse("20060102", string(data[1:len(data)-1]))
+		t, err = time.Parse(dCompactFmt, ds)
 		if err != nil {
 			return err
 		}
@@ -23,7 +30,7 @@ func (d *Date) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (d Date) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("%q", time.Time(d).Format(time.DateOnly))), nil
+	return []byte(fmt.Sprintf("%q", time.Time(d).Format(dDefaultFmt))), nil
 }
 
 // Implement driver.Valuer for saving JSONB
@@ -40,24 +47,19 @@ func (d Date) Value() (driver.Value, error) {
 
 // Implement sql.Scanner for reading JSONB
 func (d *Date) Scan(value interface{}) error {
-	s, ok := value.(string)
-	var tm time.Time
-	var err error
-	if ok {
-		tm, err = time.Parse("20060102", s)
-		if err == nil {
-			*d = Date(tm)
-			return nil
-		}
+	switch v := value.(type) {
+	case []byte:
+		return d.UnmarshalJSON(v)
+	case string:
+		return d.UnmarshalJSON([]byte(v))
+	case time.Time:
+		*d = Date(v)
+		return nil
+	default:
+		return errors.New("type assertion to Date failed")
 	}
-	tm, ok = value.(time.Time)
-	if !ok {
-		return errors.New("type assertion to time.Time failed")
-	}
-	*d = Date(tm)
-	return nil
 }
 
 func (d Date) String() string {
-	return time.Time(d).Format(time.DateOnly)
+	return time.Time(d).Format(dDefaultFmt)
 }
