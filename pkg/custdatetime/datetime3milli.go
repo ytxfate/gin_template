@@ -10,15 +10,15 @@ import (
 )
 
 const (
-	defaultFmt = "2006-01-02 15:04:05.000"
-	compactFmt = "20060102150405.000"
+	dt3mDefaultFmt = "2006-01-02 15:04:05.000"
+	dt3mCompactFmt = "20060102150405.000"
 )
 
 type DateTime3Milli time.Time
 
 func (d *DateTime3Milli) UnmarshalJSON(data []byte) (err error) {
-	ds := string(data[1 : len(data)-1])
-	t, err := time.Parse(defaultFmt, ds)
+	ds := strings.Trim(string(data), "\"")
+	t, err := time.Parse(dt3mDefaultFmt, ds)
 	if err != nil {
 		// 移除非必要字符
 		ds = strings.ReplaceAll(ds, "-", "")
@@ -28,7 +28,7 @@ func (d *DateTime3Milli) UnmarshalJSON(data []byte) (err error) {
 		ds = strings.ReplaceAll(ds, ".", "")
 		ds += "00000000000000000"
 		ds = ds[:14] + "." + ds[14:17] // 日期处理成 20060102150405.000 格式
-		t, err = time.Parse(compactFmt, ds)
+		t, err = time.Parse(dt3mCompactFmt, ds)
 		if err != nil {
 			return err
 		}
@@ -38,7 +38,7 @@ func (d *DateTime3Milli) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (d DateTime3Milli) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("%q", time.Time(d).Format(defaultFmt))), nil
+	return []byte(fmt.Sprintf("%q", time.Time(d).Format(dt3mDefaultFmt))), nil
 }
 
 // Implement driver.Valuer for saving JSONB
@@ -55,14 +55,19 @@ func (d DateTime3Milli) Value() (driver.Value, error) {
 
 // Implement sql.Scanner for reading JSONB
 func (d *DateTime3Milli) Scan(value interface{}) error {
-	tm, ok := value.(time.Time)
-	if !ok {
-		return errors.New("type assertion to time.Time failed")
+	switch v := value.(type) {
+	case []byte:
+		return d.UnmarshalJSON(v)
+	case string:
+		return d.UnmarshalJSON([]byte(v))
+	case time.Time:
+		*d = DateTime3Milli(v)
+		return nil
+	default:
+		return errors.New("type assertion to DateTime3Milli failed")
 	}
-	*d = DateTime3Milli(tm)
-	return nil
 }
 
 func (d DateTime3Milli) String() string {
-	return time.Time(d).Format(defaultFmt)
+	return time.Time(d).Format(dt3mDefaultFmt)
 }
