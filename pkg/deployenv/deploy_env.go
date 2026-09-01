@@ -45,16 +45,16 @@ func (e DeployEnv) String() string {
 }
 
 func IsDeployEnv(s string) (DeployEnv, error) {
-	switch {
-	case s == "DEV":
+	switch s {
+	case "DEV":
 		return DEV, nil
-	case s == "SIT":
+	case "SIT":
 		return SIT, nil
-	case s == "UAT":
+	case "UAT":
 		return UAT, nil
-	case s == "PRE_PROD":
+	case "PRE_PROD":
 		return PRE_PROD, nil
-	case s == "PROD":
+	case "PROD":
 		return PROD, nil
 	}
 	return 0, errors.New("unknow enum")

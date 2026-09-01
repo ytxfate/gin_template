@@ -90,7 +90,9 @@ func (c *cli) Login() (token string, err error) {
 	if err != nil {
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err = resp.Body.Close()
+	}()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -141,7 +143,9 @@ func (c *cli) GetConfig(accessToken, dataId string) (config string, configType s
 	if err != nil {
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err = resp.Body.Close()
+	}()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {

@@ -57,7 +57,7 @@ func TestDateTime3MilliUnmarshalJSON(t *testing.T) {
 }
 
 func TestDateTime3MilliMarshalJSON(t *testing.T) {
-	var d DateTime3Milli = DateTime3Milli(time.Now())
+	var d = DateTime3Milli(time.Now())
 	s, err := d.MarshalJSON()
 	if err != nil {
 		panic(err)
@@ -66,7 +66,7 @@ func TestDateTime3MilliMarshalJSON(t *testing.T) {
 }
 
 func TestDateTime3MilliValue(t *testing.T) {
-	var d DateTime3Milli = DateTime3Milli(time.Now())
+	var d = DateTime3Milli(time.Now())
 	s, err := d.Value()
 	if err != nil {
 		panic(err)
@@ -125,7 +125,7 @@ func TestDateTimeUnmarshalJSON(t *testing.T) {
 }
 
 func TestDateTimeMarshalJSON(t *testing.T) {
-	var d DateTime = DateTime(time.Now())
+	var d = DateTime(time.Now())
 	s, err := d.MarshalJSON()
 	if err != nil {
 		panic(err)
@@ -134,7 +134,7 @@ func TestDateTimeMarshalJSON(t *testing.T) {
 }
 
 func TestDateTimeValue(t *testing.T) {
-	var d DateTime = DateTime(time.Now())
+	var d = DateTime(time.Now())
 	s, err := d.Value()
 	if err != nil {
 		panic(err)
@@ -193,7 +193,7 @@ func TestDateUnmarshalJSON(t *testing.T) {
 }
 
 func TestDateMarshalJSON(t *testing.T) {
-	var d Date = Date(time.Now())
+	var d = Date(time.Now())
 	s, err := d.MarshalJSON()
 	if err != nil {
 		panic(err)
@@ -202,7 +202,7 @@ func TestDateMarshalJSON(t *testing.T) {
 }
 
 func TestDateValue(t *testing.T) {
-	var d Date = Date(time.Now())
+	var d = Date(time.Now())
 	s, err := d.Value()
 	if err != nil {
 		panic(err)

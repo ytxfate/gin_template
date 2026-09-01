@@ -7,6 +7,14 @@ import (
 
 func TestConn(t *testing.T) {
 	logger.InitLogger(false)
-	InitGaussDB(nil)
-	Close()
+	err := InitGaussDB(nil)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	err = Close()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 }
