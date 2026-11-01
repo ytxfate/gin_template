@@ -8,5 +8,9 @@ import (
 
 func TestDBConfig(t *testing.T) {
 	env := nacos.InitNacos(deployenv.DEV)
-	InitAllDBConfig(env)
+	err := InitAllDBConfig(env)
+	if err != nil {
+		t.Error(err)
+		return
+	}
 }

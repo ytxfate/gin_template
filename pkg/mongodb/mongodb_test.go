@@ -7,6 +7,14 @@ import (
 
 func TestConn(t *testing.T) {
 	logger.InitLogger(false)
-	InitMongoDB(nil)
-	Close()
+	err := InitMongoDB(nil)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	err = Close()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 }

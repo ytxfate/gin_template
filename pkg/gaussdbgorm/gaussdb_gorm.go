@@ -73,14 +73,18 @@ func connectGaussDB(g *GaussDBConf) error {
 		}
 	}
 	var err error
-	l := gormzap.New(logger.GetLogger())
+	l := gormzap.New(logger.GetLogger(), gormzap.WithConfig(glog.Config{
+		SlowThreshold: time.Second, // 一秒以上才算慢SQL
+		LogLevel:      glog.Warn,   // 日志等级
+	}))
 	GDB, err = gorm.Open(gaussdb.New(gaussdb.Config{
 		DSN: guassDBDNSBuilder(g),
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true, // 禁用复数表名
 		},
-		Logger: l.LogMode(glog.Warn),
+		QueryFields: true,
+		Logger:      l,
 	})
 	if err != nil {
 		logger.Errorf("GaussDB connect error: %s", err.Error())

@@ -28,9 +28,14 @@ func TestGet(t *testing.T) {
 		fmt.Println("req err:", err)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Println("resp close err:", err)
+		}
+	}()
 	fmt.Println("http status: ", resp.StatusCode, resp.Status)
-	var data map[string]interface{}
+	var data map[string]any
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("resp read err:", err)
@@ -62,10 +67,15 @@ func TestPost(t *testing.T) {
 		fmt.Println("req err:", err)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			fmt.Println("resp close err:", err)
+		}
+	}()
 	fmt.Println(req)
 	fmt.Println("http status: ", resp.StatusCode, resp.Status)
-	var data map[string]interface{}
+	var data map[string]any
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("resp read err:", err)

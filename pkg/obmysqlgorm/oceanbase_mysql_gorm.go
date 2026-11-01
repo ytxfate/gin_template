@@ -75,7 +75,8 @@ func connectOceanBase(o *OceanBaseConf) error {
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true, // 禁用复数表名
 		},
-		Logger: l,
+		QueryFields: true, // 避免部分struct内gorm column大小写导致绑定失败
+		Logger:      l,
 	})
 	if err != nil {
 		logger.Errorf("OceanBase connect error: %s", err.Error())

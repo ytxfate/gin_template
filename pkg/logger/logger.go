@@ -10,9 +10,10 @@ import (
 )
 
 var (
-	logger  *zap.Logger
-	logLock sync.RWMutex
-	once    sync.Once
+	logger        *zap.Logger
+	logLock       sync.RWMutex
+	once          sync.Once
+	nameLoggerMap = make(map[string]*zap.Logger)
 )
 
 func SetLogger(log *zap.Logger) {
@@ -25,6 +26,16 @@ func GetLogger() *zap.Logger {
 	logLock.Lock()
 	defer logLock.Unlock()
 	return logger
+}
+
+func GetNameLogger(name string) *zap.Logger {
+	log, ok := nameLoggerMap[name]
+	if ok {
+		return log
+	}
+	log = GetLogger().Named(name)
+	nameLoggerMap[name] = log
+	return log
 }
 
 func InitLogger(isProd bool) {
